@@ -1,5 +1,7 @@
 # Gaming Alexandria Image Workflow 
 
+![Screenshot of the script menu](https://github.com/Mechafatnick/GA-Image-Workflow/blob/main/Screenshot.png)
+
 Hello! This is a script designed to automate the processing of images that have been scanned by Gaming Alexandria. When pointed at a folder this script will get all of the images in that folder, then process each by:
 
  - Detecting the Black and White points of the image and extent of any yellowing
@@ -27,4 +29,7 @@ The script can be overridden in a number of ways:
 
  - First, you can override the colour/black and white detection with  subfolders. Before running the script if you put all of the colour images into a subfolder called '*COL*' and the black and white images into a subfolder called *'B&W*', each image will be treated based on the folder it's found in.
  - Secondly, the script menu itself gives a number of different options you can change. Using the radio buttons, you can change the extent of the deyellowing or turn it off, give custom descreening settings and provide custom levels for your images (the boxes are based on order found in the Photoshop levels interface)
- - Finally, the default values for my levelling options are defined in lines 12-68 of the script. If you're adding in custom value constantly, you can change these so the normal/dark/light/sharpen/deyellow values reflect your Personal taste.
+ - Finally, the default values for my levelling options are defined in lines 12-68 of the script. If you're adding in custom value constantly, you can change these so the normal/dark/light/sharpen/deyellow values reflect your personal taste.
+ 
+![Editable Script Values](https://github.com/Mechafatnick/GA-Image-Workflow/blob/main/ScriptValues.png?raw=true)
+
