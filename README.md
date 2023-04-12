@@ -11,7 +11,7 @@ Hello! This is a script designed to automate the processing of images that have 
  - De-screen via Sattva Descreen (if the screen size cannot be detected a number of alternatives will be created at different potential screen sizes)
  - Save the processed file(s) in an 'Out' subfolder in the folder you have scanned
 
-Unfortunately this script requires both Photoshop and the Sattva Descreen plugin at this time.
+Please note this script requires the Sattva Descreen plugin for descreening images, but descreening can be turned off in the options.
 
 # Installation
 
@@ -25,11 +25,22 @@ Run the script within Photoshop. If running correctly, you will see the script m
 
 # Overriding The Script
 
+
+![Customisation Options](https://github.com/Mechafatnick/GA-Image-Workflow/blob/main/CustomLevels.png?raw=true)
+
+
+
 The script can be overridden in a number of ways:
 
- - First, you can override the colour/black and white detection with  subfolders. Before running the script if you put all of the colour images into a subfolder called '*COL*' and the black and white images into a subfolder called *'B&W*', each image will be treated based on the folder it's found in.
- - Secondly, the script menu itself gives a number of different options you can change. Using the radio buttons, you can change the extent of the deyellowing or turn it off, give custom descreening settings and provide custom levels for your images (the boxes are based on order found in the Photoshop levels interface)
+ - First, you can turn off each of the main modules - White Point/Black Point Detection, De-yellowing, Levelling, Descreening from the main menu.
+ - I've set up some default deyellowing and levelling options for you to choose between via the radio buttons.
+ - You can also opt to input custom levels for levelling and Descreening. Please note that opting for custom levels will disable the white point detection
  - Finally, the default values for my levelling options are defined in lines 12-68 of the script. If you're adding in custom value constantly, you can change these so the normal/dark/light/sharpen/deyellow values reflect your personal taste.
+
  
 ![Editable Script Values](https://github.com/Mechafatnick/GA-Image-Workflow/blob/main/ScriptValues.png?raw=true)
+
+# Thank you!
+
+Special thanks to Dustin (Hubz) for setting up Gaming Alexandria in the first place, and r-bin over the adobe forums for his Most ingenious Raw Pixels function (on which my file analysis is based)
 

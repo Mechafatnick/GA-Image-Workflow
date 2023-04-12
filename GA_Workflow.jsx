@@ -2,18 +2,22 @@
 ///////////////////////////////////////////
 ////////////////////////////////////////////////////GA Workflow Automationtool
 ///////////////////////////////Work Flow Tool For automating the processing of GA Scans
-/////////////////By Nick Greenfield
+/////////////////By Nick Greenfield (Web: https://mechafatnick.co.uk Github: https://github.com/Mechafatnick/
 //////////
 /////////////////////////////////
 /////////////////////////////////////////////
 
 
 
-///////////////////////Values You can change (if you want!)
-scriptVersion = 1.0;
+
+scriptVersion = 1.1;
 debug = 0;
 theLogo =  getLogo();
 BatchOptions.suppressProfile =true;
+
+///////////////////////Values You can change (if you want!)
+
+
 //////////////////
 //default level Vals
 /////////////////
@@ -248,84 +252,75 @@ app.preferences.rulerUnits = Units.PIXELS;
 ////////////Options Window!
 //////////////////////////////
 
+customScreen = false;
+
 //
 w=new Window("dialog", "Gaming Alexandria Scan Workflow"),
   icon = w.add("group");
   icon.orientation = "row";
-  icon.add ("image", undefined, theLogo);  
+  icon.add ("image", undefined, theLogo);
+  //options  
   radio=w.add("panel", undefined, "Options"),
   radio.orientation = "row";
   subFolderstext = radio.add("statictext", undefined, "Process Folders:"),
   subFoldersCheck = radio.add("checkbox"),
   saveWrokingtext = radio.add("statictext", undefined, "Save Working PSDs:"),
   saveWorkingCheck = radio.add("checkbox"),
+  //individua lmodules
+  modules=w.add("panel", undefined, "Options")
+  modules.orientation = "row";
+  //white points
+  wpMod = modules.add("panel",undefined, "White/Black Point")
+  wpModOn = wpMod.add("radiobutton",undefined, "On")
+  wpModOff = wpMod.add("radiobutton",undefined, "Off")
+  wpModOn.value = true;
+  //Yellowing
+  yelMod = modules.add("panel",undefined, "Yellow Removal")
+  yOn = yelMod.add("radiobutton",undefined, "On")
+  yOff = yelMod.add("radiobutton",undefined, "Off")
+  yOn.value = true;
+  //Leveling
+  levMod = modules.add("panel",undefined, "Levelling")
+  levModOn = levMod.add("radiobutton",undefined, "On")
+  levModOn.value = true;
+  levModOff = levMod.add("radiobutton",undefined, "Off")
+
+  //Descreen
+  deScreenMod = modules.add("panel",undefined, "Descreen")
+  deScreenModOn = deScreenMod.add("radiobutton",undefined, "On")
+  deScreenModOn.value = true;
+  deScreenModOff =  deScreenMod.add("radiobutton",undefined, "Off")
+  
+
   yellowing=w.add("panel", undefined, "Deyellowing")
   yellowing.orientation = "row";
   yAuto= yellowing.add("radiobutton",undefined, "Auto deyellowing")
-  yOff = yellowing.add("radiobutton",undefined, "No deyellowing")
+  yAuto.value = true;
   yStark = yellowing.add("radiobutton",undefined, "Stark deyellowing")
   ySlight = yellowing.add("radiobutton",undefined, "Slight deyellowing")
   yNuke =  yellowing.add("radiobutton",undefined, "Nuke Yellow")
-  clevels=w.add("panel", undefined, "Colour Levels"),
-  clevels.orientation = "row";
+
+  clevels=w.add("panel", undefined, "Colour Levels");
+  clevels.orientation = "row",
   cNormal=clevels.add("radiobutton",undefined, "Standard Levels"),
+  cNormal.value = true;
   clight=clevels.add("radiobutton",undefined, "Light image Levels"),
-  cdark=clevels.add("radiobutton",undefined, "dark image Levels"),
-  cCustom=clevels.add("radiobutton",undefined, "Custom image Levels"),
-  colCus=w.add("panel", undefined, "Custom Colour Levels"),
-  colCus.orientation = "row";
-  cLowText = colCus.add("statictext", undefined, "Lower Setting:")
-  cLow = colCus.add("edittext")
-  cmidText = colCus.add("statictext", undefined, "Mid Setting:")
-  cMid = colCus.add("edittext")
-  cHighText = colCus.add("statictext", undefined, "High Setting:")
-  cHigh = colCus.add("edittext")
-  bwlevels=w.add("panel", undefined, "B&W Levels"),
-  bwlevels.orientation = "row";
+  cdark=clevels.add("radiobutton",undefined, "Dark image Levels"),
+  cCustomRGB=clevels.add("radiobutton",undefined, "Custom image Levels"),
+  bwlevels=w.add("panel", undefined, "B&W Levels");
+  bwlevels.orientation = "row",
   bwNormal=bwlevels.add("radiobutton",undefined, "Standard Levels"),
+  bwNormal.value = true;
   bwlight=bwlevels.add("radiobutton",undefined, "Light image Levels"),
-  bwdark=bwlevels.add("radiobutton",undefined, "dark image Levels"),
+  bwdark=bwlevels.add("radiobutton",undefined, "Dark image Levels"),
   bwCustom=bwlevels.add("radiobutton",undefined, "Custom image Levels"),
-  bwCus=w.add("panel", undefined, "Custom BW Levels"),
-  bwCus.orientation = "row";
-  bwLowText = bwCus.add("statictext", undefined, "Lower Setting:")
-  bwLow = bwCus.add("edittext")
-  bwmidText = bwCus.add("statictext", undefined, "Mid Setting:")
-  bwmid = bwCus.add("edittext")
-  bwHighText = bwCus.add("statictext", undefined, "High Setting:")
-  bwhigh = bwCus.add("edittext")
 
-  radio=w.add("panel", undefined, "Descreen Options"),
-  cColTicktext = radio.add("statictext", undefined, "Use Custom Color Descreen Settings?");
-  cColTick=radio.add("checkbox", undefined, ""),
-  colSetting= radio.add("panel", undefined, "Colour Descreen Settings"),
-  colSetting.orientation = "row";
-  cSizeText = colSetting.add("statictext", undefined, "Custom Screen Size:")
-  cSize = colSetting.add("edittext")
-  cSharpText = colSetting.add("statictext", undefined, "Custom Sharpness:")
-  cSharp = colSetting.add("edittext")
-  cMoirText = colSetting.add("statictext", undefined, "Reduce a Moire:")
-  cMoir = colSetting.add("checkbox", undefined, "")
-  cAngleTest = colSetting.add("statictext", undefined, "Custom Screen Angle:")
-  cAngle = colSetting.add("edittext")
-  cSensitivityText = colSetting.add("statictext", undefined, "Custom Sensitivity:")
-  cSensitivity = colSetting.add("edittext")
-
-  bwColTicktext = radio.add("statictext", undefined, "Use Custom B&W Descreen Settings?");
-  bwColTick=radio.add("checkbox", undefined, ""),
-  bwSetting= radio.add("panel", undefined, "B&W Descreen Settings"),
-  bwSetting.orientation = "row";
-  bwSizeText = bwSetting.add("statictext", undefined, "Custom Screen Size:")
-  bwSize = bwSetting.add("edittext")
-  bwSharpText = bwSetting.add("statictext", undefined, "Custom Sharpness:")
-  bwSharp = bwSetting.add("edittext")
-
-
-
-  cSize.characters = 3; 
-  cSharp.characters = 3;
-  cAngle.characters = 3;
-  cSensitivity.characters = 3;
+ deScreen = w.add("panel",undefined, "deScreen Settings"),
+ deScreen.orientation = "row",
+ deScreenNormal = deScreen.add("radiobutton",undefined, "Normal")
+ deScreenNormal.value = true;
+ deScreenCustom = deScreen.add("radiobutton",undefined, "Custom")
+ 
 
 butArea=w.add("panel", undefined, ""),
    butArea.orientation = "Row";
@@ -334,9 +329,7 @@ Cancelbut.onClick=function(){ cancelChk=1, w.hide()}
 okBut = butArea.add ("button", undefined, "OK");
 versionPan =w.add("panel", undefined, "");
 versionNum = versionPan.add("statictext", undefined, "( Script Version: " + scriptVersion+ " )" );
-bwNormal.value=true;
-cNormal.value=true;
-yAuto.value =true;
+
 w.show();
 ////////////////////////////////////////////////////
 ////////////////////////////////////////
@@ -347,28 +340,167 @@ w.show();
 //Cancel button if cancel clicked
 
 if (cancelChk==1){alert("Script Canceled")}
-else{
 
-//set levels based on custom settings or defaults
+else{
+//Setup persistent values before opening second window
+var levelsOn = true;
+var DescreenOn = true;
+var whitePointOn = true;
+var levelsRGB = false;
+if(cCustomRGB.value == true){levelsRGB = true}
+
+if(deScreenModOff.value == true){DescreenOn = false}
+if(levModOff.value == true){levelsOn = false}
+if(wpModOff.value == true){whitePointOn = false}
+
 
 if (cNormal.value == true){colBottom = normalVals[0];colMid= normalVals[1];colTop = normalVals[2];}
 if (cdark.value == true){colBottom = darkVals[0];colMid= darkVals[1];colTop = darkVals[2];}
 if (clight.value == true){colBottom = lightVals[0];colMid= lightVals[1];colTop = lightVals[2];}
-if (cCustom.value == true){colBottom = cLow.text;colMid= cMid.text;colTop = cHigh.text;}
-
 if (bwNormal.value == true){bwBottom = bwNormalVals[0];bwMid= bwNormalVals[1];bwTop = bwNormalVals[2];}
 if (bwdark.value == true){bwBottom = bwDarkVals[0];bwMid= bwDarkVals[1];bwTop = bwDarkVals[2];}
 if (bwlight.value == true){bwBottom = bwLightVals[0];bwMid= bwLightVals[1];bwTop = bwLightVals[2];}
-if (bwCustom.value == true){bwBottom = bwLow.text;bwMid= bwmid.text;bwTop = bwhigh.text;}
-//
-////////////////
-////Custom Variables
-/////////////
-var customCol = cColTick.value;
+//deyellow
+if(yStark.value == true){deYellow = 2}
+if(ySlight.value == true){deYellow = 3}    
+if(yNuke.value == true){deYellow = 4}
+if (yOff.value == true)(deYellow = 1)
+//////
+/////////
 
-var custombw = bwColTick.value;
+//Are custom options selected and modules on?
+if(levModOn.value == true || deScreenModOn.value == true ){
+if (deScreenCustom.value == true || bwCustom.value == true|| levelsRGB == true ){
+w2=new Window("dialog", "Customisation")
+//Setup selected custom options
+
+    if(levelsRGB == true && levModOn.value == true ){
+        whitePointOn = false;
+        colCus=w2.add("panel", undefined, "Custom Colour Levels (RGB"),
+        //
+        RGBcols = colCus.add("panel", undefined, "RGB Settings")
+        RGBcols.orientation = "row";
+        cLowText = RGBcols.add("statictext", undefined, "Lower Setting:")
+        cLow = RGBcols.add("edittext")
+        cLow.text = 0;
+        cmidText = RGBcols.add("statictext", undefined, "Mid Setting:")
+        cMid = RGBcols.add("edittext")
+        cMid.text = 1.0;
+        cHighText = RGBcols.add("statictext", undefined, "High Setting:")
+        cHigh = RGBcols.add("edittext")
+        cHigh.text = 255;
+        //
+        Rcols = colCus.add("panel", undefined, "Red Settings")
+        Rcols.orientation = "row";
+        rLowText = Rcols.add("statictext", undefined, "Lower Setting:")
+        rLow = Rcols.add("edittext")
+        rLow.text = 0;
+        rmidText = Rcols.add("statictext", undefined, "Mid Setting:")
+        rMid = Rcols.add("edittext")
+        rMid.text = 1.0;
+        rHighText = Rcols.add("statictext", undefined, "High Setting:")
+        rHigh = Rcols.add("edittext")
+        rHigh.text = 255;
+        //
+        Gcols = colCus.add("panel", undefined, "Green Settings")
+        Gcols.orientation = "row";
+        gLowText = Gcols.add("statictext", undefined, "Lower Setting:")
+        gLow = Gcols.add("edittext")
+        gLow.text = 0;
+        gmidText = Gcols.add("statictext", undefined, "Mid Setting:")
+        gMid = Gcols.add("edittext")
+        gMid.text = 1.0;
+        gHighText = Gcols.add("statictext", undefined, "High Setting:")
+        gHigh = Gcols.add("edittext")
+        gHigh.text = 255
+        //
+        Bcols = colCus.add("panel", undefined, "Blue Settings")
+        Bcols.orientation = "row";
+        bLowText = Bcols.add("statictext", undefined, "Lower Setting:")
+        bLow = Bcols.add("edittext")
+        bLow.text = 0
+        bmidText = Bcols.add("statictext", undefined, "Mid Setting:")
+        bMid = Bcols.add("edittext")
+        bMid.text = 1.0
+        bHighText = Bcols.add("statictext", undefined, "High Setting:")
+        bHigh = Bcols.add("edittext")
+        bHigh.text = 255
+    }
 
 
+
+
+    
+
+
+    if(bwCustom.value == true && levModOn.value == true ){
+    bwlevels=w2.add("panel", undefined, "B&W Levels"),
+    bwCus=w2.add("panel", undefined, "Custom BW Levels"),
+    bwCus.orientation = "row";
+    bwLowText = bwCus.add("statictext", undefined, "Lower Setting:")
+    bwLow = bwCus.add("edittext")
+    bwmidText = bwCus.add("statictext", undefined, "Mid Setting:")
+    bwmid = bwCus.add("edittext")
+    bwHighText = bwCus.add("statictext", undefined, "High Setting:")
+    bwhigh = bwCus.add("edittext")
+    }
+    
+    if(deScreenCustom.value == true &&  deScreenModOn.value == true){
+    
+    radio=w2.add("panel", undefined, "Descreen Options"),
+    cColTicktext = radio.add("statictext", undefined, "Use Custom Color Descreen Settings?");
+    cColTick=radio.add("checkbox", undefined, ""),
+    colSetting= radio.add("panel", undefined, "Colour Descreen Settings"),
+    colSetting.orientation = "row";
+    cSizeText = colSetting.add("statictext", undefined, "Custom Screen Size:")
+    cSize = colSetting.add("edittext")
+    cSharpText = colSetting.add("statictext", undefined, "Custom Sharpness:")
+    cSharp = colSetting.add("edittext")
+    cMoirText = colSetting.add("statictext", undefined, "Reduce a Moire:")
+    cMoir = colSetting.add("checkbox", undefined, "")
+    cAngleTest = colSetting.add("statictext", undefined, "Custom Screen Angle:")
+    cAngle = colSetting.add("edittext")
+    cSensitivityText = colSetting.add("statictext", undefined, "Custom Sensitivity:")
+    cSensitivity = colSetting.add("edittext")
+  
+    bwColTicktext = radio.add("statictext", undefined, "Use Custom B&W Descreen Settings?");
+    bwColTick=radio.add("checkbox", undefined, ""),
+    bwSetting= radio.add("panel", undefined, "B&W Descreen Settings"),
+    bwSetting.orientation = "row";
+    bwSizeText = bwSetting.add("statictext", undefined, "Custom Screen Size:")
+    bwSize = bwSetting.add("edittext")
+    bwSharpText = bwSetting.add("statictext", undefined, "Custom Sharpness:")
+    bwSharp = bwSetting.add("edittext")
+
+    cSize.characters = 3; 
+  cSharp.characters = 3;
+  cAngle.characters = 3;
+  cSensitivity.characters = 3;
+    }
+    butArea2=w2.add("panel", undefined, ""),
+   butArea2.orientation = "Row";
+   Cancelbut2 = butArea2.add ("button", undefined, "Cancel");
+Cancelbut2.onClick=function(){ cancelChk=1, w2.hide()} 
+okBut2 = butArea2.add ("button", undefined, "OK");
+    w2.show()
+
+}
+///////////////////////
+////////////////////////////////
+/////Set the custom options (if filled in)
+try{    
+    //Custom Levels
+    if (cLow.text !== ""){colBottom = cLow.text;colMid= cMid.text;colTop = cHigh.text;}}
+    catch(err){}
+    if (levelsRGB ==true){var rdLower = rLow.text;var rdGamma = rMid.text;var rdUpper = rHigh.text;var gLower = gLow.text;var gGamma = gMid.text;var gUpper = gHigh.text;var bLower = bLow.text;var bGamma = bMid.text;var bUpper = bHigh.text;}
+    
+
+
+try{
+    if (bLow.text !== ""){bwBottom = bwLow.text;bwMid= bwmid.text;bwTop = bwhigh.text;}}
+catch(err){}
+try{
+//custom descreen
 //colour settings
 customSize = cSize.text
 customSharp = cSharp.text
@@ -376,14 +508,25 @@ customMoir = cMoir.value
 customAngle = cAngle.text
 customSensitivity = cSensitivity.text
 //BW Settings
-
 customBWsize = bwSize.text;
 customBWsharp = bwSharp.text;
-//deyellow
-if(yOff.value == true){deYellow = 1}  
-if(yStark.value == true){deYellow = 2}
-if(ySlight.value == true){deYellow = 3}    
-if(yNuke.value == true){deYellow = 4}
+}
+catch(err){}
+}
+
+//set levels based on custom settings or defaults
+
+
+
+//
+////////////////
+////Custom Variables
+/////////////
+
+
+
+
+
 
 
 
@@ -533,12 +676,13 @@ for (var n = 0; n < WhiteP.length; n++) {
     if(WhiteP[n] < 250){ WhiteP[n] = (WhiteP[n] * 1.01)}
     } 
 
-
-setPoints(BlackP[0], WhiteP[0], BlackP[1], WhiteP[1], BlackP[2], WhiteP[2], BlackP[3], WhiteP[3])
+    //Set the white point if white point module not turned off 
+    if (whitePointOn!== false){setPoints(BlackP[0], WhiteP[0], BlackP[1], WhiteP[1], BlackP[2], WhiteP[2], BlackP[3], WhiteP[3])}
 ////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////
 
 ////DEYELLOWing
+
 if(deYellow == 0){  
 if(yellowness == 1){gentleReduceYellow()}
 if(yellowness == 0){deyellow();}}
@@ -624,6 +768,10 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     var outfile = ""
     var average = (getHistoMean(0) + getHistoMean(1) + getHistoMean(2))
+    
+    //if Leveling module not switched off, apply levels
+    
+    if(levelsOn !== false){
     createLevels();
     setLevels(bwBottom,bwMid,bwTop)
     newAverage = (getHistoMean(0) + getHistoMean(1) + getHistoMean(2))
@@ -631,12 +779,11 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     if ((newAverage - average) > -15 && (newAverage - average ) < 15){}
     else{setLevels(31,1,220)}
-    
+    }
     app.displayDialogs = DialogModes.NO
     if(((getHistoMean(0) + getHistoMean(1) + getHistoMean(2))/3) <225){convertToRGB()} 
     else{
         doc.convertProfile("Dot Gain 20%", Intent.RELATIVECOLORIMETRIC, true, true)}
-    
     
     doc.activeLayer = doc.layers[doc.layers.length-1]
     doc.bitsPerChannel = BitsPerChannelType.SIXTEEN;
@@ -644,10 +791,11 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
         
     try{
     //if auto screen works, save in the auto folder then save working folder and we're done!
-    deScreenAuto()
+    if(DescreenOn !== false){deScreenAuto()}
     applyHighPass(2);
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
-    var outfile = new File(outFolder + "/" + basename + ".jpg")
+    if(DescreenOn == false){var outfile = new File(outFolder + "/" + basename + "_nosattva.jpg")}
+    else(outfile = new File(outFolder + "/" + basename + ".jpg"))
     saveJPG(doc,outfile)
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
@@ -660,12 +808,14 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     
     try{
+    var no130 = 0;
         multipleDescreenbw(doc, basename + "_133", 133, outFolder)}
-    catch(err){onethirtyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.jpg");
-    saveJPG(doc,outfile)}
+    catch(err){onethirtyArr.push(basename);no130=1;}
     
-    try{multipleDescreenbw(doc, basename + "_150", 150, alternateFolder)}
-    catch(err){oneFiftyArr.push(basename)}
+    try{if (no130==0){multipleDescreenbw(doc, basename + "_150", 150, alternateFolder)}
+        else{multipleDescreenbw(doc, basename + "_150", 150, outFolder)}
+}
+    catch(err){oneFiftyArr.push(basename);if (no130==1){var outfile = new File(outFolder + "/" + basename + "_nosattva.jpg");saveJPG(doc,outfile)}}
     
     try{multipleDescreenbw(doc, basename + "_170", 170, alternateFolder)}
     catch(err){oneSeventyArr.push(basename)}
@@ -705,7 +855,7 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     doc = theDoc;
     colImages.push(basename)
     convertToRGB()
-    if(cCustom.value == false){
+    if(levelsRGB == false){
     
     if((getHistoMean(0) + getHistoMean(1) + getHistoMean(2))/3 > 130){colMid=1.00}
     if((getHistoMean(0) + getHistoMean(1) + getHistoMean(2))/3 > 160){colMid=0.90}
@@ -715,19 +865,20 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     
     
-    
+    //Create Levels leveling module not switched off
+    if(levelsOn !== false){
     
     createLevels()
-    
-    setLevels(colBottom,colMid,colTop)
-    
+    if(levelsRGB == false){ setLevels(colBottom,colMid,colTop)}
+    else{setLevelsRGB(colBottom, colMid, colTop, rdLower, rdGamma, rdUpper, gLower, gGamma, gUpper,bLower,bGamma,bUpper)}
+    }
     
     
     activeLayer = doc.layers[0]
     doc.activeLayer = doc.layers[doc.layers.length-1]
     if (customCol == true){
     try{
-    if(!customFolder.exists){customFolder.create()};
+    //if(!customFolder.exists){customFolder.create()};
     doc.bitsPerChannel = BitsPerChannelType.SIXTEEN;
     deScreenCol(customSize, customSharp, customMoir, customAngle, customSensitivity)
     applyHighPass(2)
@@ -744,11 +895,12 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     if (customCol == false){
     try{
     doc.bitsPerChannel = BitsPerChannelType.SIXTEEN;    
-    deScreenAuto()  
+    if(DescreenOn !== false){deScreenAuto()}
     applyHighPass(2);
     SmartSharp(ssPercent, ssPixel,ssNoiseReduction,ssBlur,sShdAmnt, sShdWdth, shghAmnt, sghwdth)
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
-    var outfile = new File(outFolder + "/" + basename + ".jpg")
+    if(DescreenOn == false){outfile = new File(outFolder + "/" + basename + "_noSattva.jpg")}
+    else{outfile = new File(outFolder + "/" + basename + ".jpg")}
     saveJPG(doc,outfile)
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
@@ -757,17 +909,19 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     catch(err){
     try{
+    no150 = 0
     if(!alternateFolder.exists) alternateFolder.create();
     
     multipleDescreenCol(doc, basename+ "_133", 133, 1, true, 0, 0, alternateFolder)}
     catch(err){onethirtyArr.push(basename)}
     
     try{multipleDescreenCol(doc,basename+"_150",150, 1, true, 0, 0, outFolder)}
-    catch(err){oneFiftyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.jpg");
-    saveJPG(doc,outfile)}
+    catch(err){oneFiftyArr.push(basename);no150=1}
     
-    try{multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, alternateFolder)}
-    catch(err){oneSeventyArr.push(basename)}
+    
+    try{if (no150==0){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, alternateFolder)}
+        else{multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, outFolder)}}
+    catch(err){oneSeventyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.jpg")}
     
     try{multipleDescreenCol(doc,basename + "_200",200, 1, true, 0, 0, alternateFolder)}
     catch(err){twoHundreArr.push(basename)}
@@ -911,6 +1065,112 @@ executeAction( idMk, desc225, DialogModes.NO );
 }
 //////////////Set adjustment layers - upper/lower/gammer
 ////////////////////////////////////////////
+function setLevelsRGB(lower, gamma, upper, rdLower, rdGamma, rdUpper, gLower, gGamma, gUpper,bLower,bGamma,bUpper){
+    // =======================================================
+var idsetd = charIDToTypeID( "setd" );
+var desc242 = new ActionDescriptor();
+var idnull = charIDToTypeID( "null" );
+    var ref2 = new ActionReference();
+    var idAdjL = charIDToTypeID( "AdjL" );
+    var idOrdn = charIDToTypeID( "Ordn" );
+    var idTrgt = charIDToTypeID( "Trgt" );
+    ref2.putEnumerated( idAdjL, idOrdn, idTrgt );
+desc242.putReference( idnull, ref2 );
+var idT = charIDToTypeID( "T   " );
+    var desc243 = new ActionDescriptor();
+    var idpresetKind = stringIDToTypeID( "presetKind" );
+    var idpresetKindType = stringIDToTypeID( "presetKindType" );
+    var idpresetKindCustom = stringIDToTypeID( "presetKindCustom" );
+    desc243.putEnumerated( idpresetKind, idpresetKindType, idpresetKindCustom );
+    var idAdjs = charIDToTypeID( "Adjs" );
+        var list4 = new ActionList();
+            var desc244 = new ActionDescriptor();
+            var idChnl = charIDToTypeID( "Chnl" );
+                var ref3 = new ActionReference();
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idCmps = charIDToTypeID( "Cmps" );
+                ref3.putEnumerated( idChnl, idChnl, idCmps );
+            desc244.putReference( idChnl, ref3 );
+            var idInpt = charIDToTypeID( "Inpt" );
+                var list5 = new ActionList();
+                list5.putInteger( lower );
+                list5.putInteger( upper );
+            desc244.putList( idInpt, list5 );
+            var idGmm = charIDToTypeID( "Gmm " );
+            desc244.putDouble( idGmm, gamma );
+        var idLvlA = charIDToTypeID( "LvlA" );
+        list4.putObject( idLvlA, desc244 );
+            var desc245 = new ActionDescriptor();
+            var idChnl = charIDToTypeID( "Chnl" );
+                var ref4 = new ActionReference();
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idRd = charIDToTypeID( "Rd  " );
+                ref4.putEnumerated( idChnl, idChnl, idRd );
+            desc245.putReference( idChnl, ref4 );
+            var idInpt = charIDToTypeID( "Inpt" );
+                var list6 = new ActionList();
+                list6.putInteger( rdLower);
+                list6.putInteger( rdUpper);
+            desc245.putList( idInpt, list6 );
+            var idGmm = charIDToTypeID( "Gmm " );
+            desc245.putDouble( idGmm, rdGamma );
+        var idLvlA = charIDToTypeID( "LvlA" );
+        list4.putObject( idLvlA, desc245 );
+            var desc246 = new ActionDescriptor();
+            var idChnl = charIDToTypeID( "Chnl" );
+                var ref5 = new ActionReference();
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idGrn = charIDToTypeID( "Grn " );
+                ref5.putEnumerated( idChnl, idChnl, idGrn );
+            desc246.putReference( idChnl, ref5 );
+            var idInpt = charIDToTypeID( "Inpt" );
+                var list7 = new ActionList();
+                list7.putInteger(gLower);
+                list7.putInteger(gUpper);
+            desc246.putList( idInpt, list7 );
+            var idGmm = charIDToTypeID( "Gmm " );
+            desc246.putDouble( idGmm, gGamma );
+        var idLvlA = charIDToTypeID( "LvlA" );
+        list4.putObject( idLvlA, desc246 );
+            var desc247 = new ActionDescriptor();
+            var idChnl = charIDToTypeID( "Chnl" );
+                var ref6 = new ActionReference();
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idChnl = charIDToTypeID( "Chnl" );
+                var idBl = charIDToTypeID( "Bl  " );
+                ref6.putEnumerated( idChnl, idChnl, idBl );
+            desc247.putReference( idChnl, ref6 );
+            var idInpt = charIDToTypeID( "Inpt" );
+                var list8 = new ActionList();
+                list8.putInteger(bLower);
+                list8.putInteger(bUpper);
+            desc247.putList( idInpt, list8 );
+            var idGmm = charIDToTypeID( "Gmm " );
+            desc247.putDouble( idGmm, bGamma );
+        var idLvlA = charIDToTypeID( "LvlA" );
+        list4.putObject( idLvlA, desc247 );
+    desc243.putList( idAdjs, list4 );
+var idLvls = charIDToTypeID( "Lvls" );
+desc242.putObject( idT, idLvls, desc243 );
+executeAction( idsetd, desc242, DialogModes.NO );}
+
+// =======================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // =======================================================
 function setLevels(lower, gamma, upper){
