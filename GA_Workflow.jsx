@@ -10,11 +10,18 @@
 
 
 
-scriptVersion = 1.1;
+scriptVersion = 2;
 debug = 0;
 theLogo =  getLogo();
 BatchOptions.suppressProfile =true;
 
+//Tesseract language variables;
+
+language = "jpn"
+preserveInterword = 0;
+//timeout
+var timeoutLength = 8000;
+var ImTimeout =7000;
 ///////////////////////Values You can change (if you want!)
 
 
@@ -243,8 +250,40 @@ points = []
 BlackP = 0
 WhiteP = 0
 app.displayDialogs = DialogModes.ERROR
+//what we can do
+var canPreprocess = 1;
+var canBindpdf = 1;
+var canOCRpdf = 1;
+//what we will do
+preprocess = 0;
+ocrpdf = 0;
+bindpdf = 0;
+//where's front?
+frontCvrPos = 0;
 
+//get script location
+var scriptPath = File($.fileName).parent
+var scriptPathWin = convertPath(scriptPath)
 
+imgMgkPath = File(scriptPathWin + "/ImageMagick/magick.exe")
+imgMgkWin = convertPath(imgMgkPath)
+
+pdftkPath = File(scriptPathWin + "/PDFTK/pdftk.exe")
+pdftkWin = convertPath(pdftkPath)
+
+tessPath = File(scriptPathWin + "/Tesseract/tesseract_portable.exe")
+
+TessExe = convertPath(tessPath)
+//record if dependants available
+
+if(!imgMgkPath.exists){canPreprocess = 0}
+if(!pdftkPath.exists){canBindpdf = 0}
+if(!tessPath.exists){canOCRpdf = 0}
+//Arrays We'llneed across functions
+var processedFiles = []
+var currentFiles = []
+var bwFiles = []
+var colFiles = []
 
 
 app.preferences.rulerUnits = Units.PIXELS;
@@ -259,15 +298,56 @@ w=new Window("dialog", "Gaming Alexandria Scan Workflow"),
   icon = w.add("group");
   icon.orientation = "row";
   icon.add ("image", undefined, theLogo);
-  //options  
-  radio=w.add("panel", undefined, "Options"),
-  radio.orientation = "row";
-  subFolderstext = radio.add("statictext", undefined, "Process Folders:"),
-  subFoldersCheck = radio.add("checkbox"),
-  saveWrokingtext = radio.add("statictext", undefined, "Save Working PSDs:"),
-  saveWorkingCheck = radio.add("checkbox"),
+  //Main Modules
+  modulesMain=w.add("panel", undefined, "Main Modules")
+  modulesMain.orientation = "row";
+  Processtxt = modulesMain.add("statictext", undefined, "Process images as raw scans?"),
+    processCheck = modulesMain.add("checkbox")
+    processCheck.value = true;
+  if(canPreprocess == 0){
+    processCheck.value = false;
+    processCheck.enabled = false;}
+    
+    OCRtxt = modulesMain.add("statictext", undefined, "OCR PDF?"),
+    OCRcheck = modulesMain.add("checkbox")
+    OCRcheck.value = true;
+  if(canOCRpdf == 0){
+        OCRcheck.value = false;
+        OCRcheck.enabled = false;}
+  
+    bindPDFtxt = modulesMain.add("statictext", undefined, "Bind PDF?"),
+    bindpdfcheck = modulesMain.add("checkbox")
+    bindpdfcheck.value = true;
+    if(canBindpdf == 0){
+        bindpdfcheck.value = false;
+        bindpdfcheck.enabled = false;}
+//options  
+radio=w.add("panel", undefined, "Options"),
+radio.orientation = "row";
+subFolderstext = radio.add("statictext", undefined, "Process Folders:"),
+subFoldersCheck = radio.add("checkbox"),
+saveWrokingtext = radio.add("statictext", undefined, "Save Working PSDs:"),
+saveWorkingCheck = radio.add("checkbox")
+//order
+orderop = radio.add("panel", undefined, "Page Order")
+lefthandBut = orderop.add("radiobutton",undefined, "Left hand - Right hand")
+righthandBut = orderop.add("radiobutton",undefined, "Right hand - Left hand")
+CvrOrder = radio.add("panel", undefined, "Front Cover Position")
+FrntCvrBBut = CvrOrder.add("radiobutton",undefined, "Last Page is Front Cover ")
+FrntCvrFBut = CvrOrder.add("radiobutton",undefined, "First Page is Front Cover")
+lefthandBut.value = true;
+FrntCvrBBut.value = true;
+//OCR Languagues
+OCRLang=w.add("panel", undefined, "OCR Language Options"),
+OCRLang.orientation = "row";
+ocrMainlangtext = OCRLang.add("statictext", undefined, "OCR Main Language:"),
+ocrMainLanguage = OCRLang.add("dropdownlist", undefined, ["English", "Japanese", "Spanish", "French", "German", "Custom"]); 
+ocrMainLanguage.selection=1;
+ocrseclangtext = OCRLang.add("statictext", undefined, "OCR Secondary Language:"),
+ocrsecLanguage = OCRLang.add("dropdownlist", undefined, ["English", "Japanese", "Spanish","French","German", "Custom"]);
+ocrsecLanguage.selection=0;
   //individua lmodules
-  modules=w.add("panel", undefined, "Options")
+  modules=w.add("panel", undefined, "Process Modules")
   modules.orientation = "row";
   //white points
   wpMod = modules.add("panel",undefined, "White/Black Point")
@@ -329,7 +409,6 @@ Cancelbut.onClick=function(){ cancelChk=1, w.hide()}
 okBut = butArea.add ("button", undefined, "OK");
 versionPan =w.add("panel", undefined, "");
 versionNum = versionPan.add("statictext", undefined, "( Script Version: " + scriptVersion+ " )" );
-
 w.show();
 ////////////////////////////////////////////////////
 ////////////////////////////////////////
@@ -339,14 +418,35 @@ w.show();
 /////////////////
 //Cancel button if cancel clicked
 
-if (cancelChk==1){alert("Script Canceled")}
+if (cancelChk==1){alert("Script Canceled");}
 
-else{
+if (cancelChk==0){
+//turnonmodules
+if(processCheck.value ==true){ preprocess = 1;}
+if(OCRcheck.value ==true){ ocrpdf = 1;}
+if(bindpdfcheck.value ==true){bindpdf =1}
+left=1;
 //Setup persistent values before opening second window
 var levelsOn = true;
 var DescreenOn = true;
 var whitePointOn = true;
 var levelsRGB = false;
+//Get Languages
+language = getLang(ocrMainLanguage)
+var seclang = getLang(ocrsecLanguage)
+//set order
+if(lefthandBut.value == true){
+left = 0;
+}
+if(lefthandBut.value !== true){
+    left = 1;
+    }
+//front cover position?
+if(FrntCvrBBut.value == true){
+frontCvrPos = 1;
+} 
+
+
 if(cCustomRGB.value == true){levelsRGB = true}
 
 if(deScreenModOff.value == true){DescreenOn = false}
@@ -370,7 +470,7 @@ if (yOff.value == true)(deYellow = 1)
 
 //Are custom options selected and modules on?
 if(levModOn.value == true || deScreenModOn.value == true ){
-if (deScreenCustom.value == true || bwCustom.value == true|| levelsRGB == true ){
+if (deScreenCustom.value == true || bwCustom.value == true|| levelsRGB == true ||language=="none"|| seclang == "none"){
 w2=new Window("dialog", "Customisation")
 //Setup selected custom options
 
@@ -425,7 +525,9 @@ w2=new Window("dialog", "Customisation")
         bHighText = Bcols.add("statictext", undefined, "High Setting:")
         bHigh = Bcols.add("edittext")
         bHigh.text = 255
+        
     }
+
 
 
 
@@ -477,6 +579,25 @@ w2=new Window("dialog", "Customisation")
   cAngle.characters = 3;
   cSensitivity.characters = 3;
     }
+
+    if(language == "none" || seclang == "none"){
+    langbox=w2.add("panel", undefined, "language options")
+    if(language =="none"){
+        mLangText = langbox.add("statictext", undefined, "Main Language Code:")
+        mlang = langbox.add("edittext")}
+    
+    if (seclang == "none"){
+        sLangText = langbox.add("statictext", undefined, "Secondary Language Code:")
+        slang =langbox.add("edittext")}
+        
+        preserveChecktext=  langbox.add("statictext", undefined, "Preserve interword spaces? (Chinese, Japanese Vietnamse only)")
+        preservesCheck = langbox.add("checkbox"),
+        preservesCheck.value = false;
+
+
+    }
+
+
     butArea2=w2.add("panel", undefined, ""),
    butArea2.orientation = "Row";
    Cancelbut2 = butArea2.add ("button", undefined, "Cancel");
@@ -485,6 +606,9 @@ okBut2 = butArea2.add ("button", undefined, "OK");
     w2.show()
 
 }
+
+if(language=="none"){language = mlang.text}
+if(seclang=="none"){seclang = slang.text}
 ///////////////////////
 ////////////////////////////////
 /////Set the custom options (if filled in)
@@ -513,6 +637,7 @@ customBWsharp = bwSharp.text;
 }
 catch(err){}
 }
+}
 
 //set levels based on custom settings or defaults
 
@@ -539,7 +664,7 @@ catch(err){}
 //Get our Folder
 var theFolder = Folder.selectDialog("Select folder where scans are located");
 
-if(subFoldersCheck.value == false){checkFolders(theFolder)}
+if(subFoldersCheck.value == false){checkFolders(theFolder);displayEndmsg();}
 if(subFoldersCheck.value==true){
 subFolders = FindAllFolders(theFolder)
 var currentFol=0
@@ -560,7 +685,7 @@ for (var i=0;i < subFolders.length; i++){
     
 
 }
-
+displayEndmsg()
 }
 
 
@@ -568,20 +693,35 @@ for (var i=0;i < subFolders.length; i++){
 ///////Check for col/ black and white folders then push on for further processing
 ////////////
 
-function checkFolders(scanFolder){
 
+
+function checkFolders(scanFolder){
     
 //Look for Col and BW subfolders
-bwFound = false
-colFound = false
-colFolders = FindAllFolders(scanFolder)
+bwFound = false;
+colFound = false;
+colFolders = FindAllFolders(scanFolder);
 for (var i=0;i < colFolders.length; i++){
+//insert code for moving files here
+
+//var bwFiles = []
+//var colFiles = []
+
+
+
+
+if (colFolders[i].displayName.toUpperCase() == "BW"){
+  getSubFolderfiles(colFolders[i], 0, scanFolder)
+}
+
+if (colFolders[i].displayName.toUpperCase() == "COL"){
+    getSubFolderfiles(colFolders[i], 1, scanFolder)
+}
     
-if (colFolders[i].displayName.toUpperCase() == "B&W"){bwFound = true;processFolder(colFolders[i]);bwFound = false;};
-if (colFolders[i].displayName.toUpperCase() == "COL"){colFound = true;processFolder(colFolders[i]); colFound =false};
+
 }
-if(bwFound == false && colFound == false){processFolder(scanFolder)
-}
+if(preprocess == 0){filesTest = scanFolder.getFiles();if(filesTest.length > 1){processFolder(scanFolder)} if (filesTest.length < 2){alert("No files in folder"); return}};
+if(preprocess==1){filesTest = scanFolder.getFiles();if(filesTest.length > 1){preprocessFolder(scanFolder,left);processFolder(scanFolder)};if (filesTest.length < 2){alert("No files in folder"); return}  }
 }
 
 //////
@@ -591,6 +731,141 @@ if(bwFound == false && colFound == false){processFolder(scanFolder)
 ////////////////////////////////////
 /////////////////////
 
+function preprocessFolder(scanFolder, left){
+    
+pageCounter = 001;
+//get Windows path to Scann folder
+scanFolderWin = convertPath(scanFolder)
+
+//if(bwFound == false && colFound == false){
+var scanfiles = scanFolder.getFiles();
+//here
+for (var i=0;i < scanfiles.length; i++){
+
+    currentFiles.push(scanfiles[i])
+}
+currentFiles = currentFiles.sort(function (a, b) {return a.name.toString().toLowerCase().localeCompare(b.name.toString().toLowerCase());})
+
+newFiles = [];
+newCol =[]
+newBW =[]
+
+
+processedFolder = Folder(scanFolder + "/Processed")
+processedWin = convertPath(scanFolder + "/Processed")
+if(!processedFolder.exists) processedFolder.create();
+for (var i=0;i < currentFiles.length; i++){
+thename = currentFiles[i].name;
+thenamenoext = currentFiles[i].name.substring(0, currentFiles[i].name.lastIndexOf('.'));
+fileName = currentFiles[i].fsName.substring(0, currentFiles[i].fsName.lastIndexOf('.'))
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+batFile.encoding = "UTF8";
+batFile.open("e", "TEXT", "????");
+batFile.writeln("move " + '"' + currentFiles[i].fsName + '"' + " " + '"' + processedWin + "\\" + thename + '"');
+batFile.writeln('"' + imgMgkWin + '"' + " mogrify -bordercolor \"#f3f4f3\" -border 1x1 -fuzz 7%% -trim -shave 1.0x0.20%% +repage -gravity South -chop 0x40 " + '"' + processedWin + "\\" + thename + '"');
+if(isOdd(i) == false){
+batFile.writeln('"' + imgMgkWin + '"' + " mogrify -rotate 90 " + '"' + processedWin + "\\" + thename + '"');
+}
+if(isOdd(i) == true){
+batFile.writeln('"' + imgMgkWin + '"' + " mogrify -rotate 270 " + '"' + processedWin + "\\" + thename + '"');
+}
+batFile.writeln('"' + imgMgkWin + '"' + " mogrify -crop 50%%x100%% " + '"' + processedWin + "\\" + thename + '"')
+pageNumber = ""
+pageNumber=getPageNumber(pageCounter)
+if(left == 0){
+batFile.writeln("rename " + '"' + processedWin + "\\" + thenamenoext + "-0.jpg" + '"' +" " + '"' + "Page_" + pageNumber + ".jpg" + '"')
+newFiles.push(File(scanFolder + "/"  + "Page_" + pageNumber + ".jpg"))
+//loop through BW & col files - if there's a match, push filename into new array
+for(f=0; f <bwFiles.length;f++){
+if(thename  == bwFiles[f]){newBW.push("Page_" + pageNumber + ".jpg")}    
+}
+for(f=0; f <colFiles.length;f++){
+    if(thename == colFiles[f]){newCol.push("Page_" + pageNumber + ".jpg")}    
+}
+
+pageCounter++;
+pageNumber=getPageNumber(pageCounter)
+batFile.writeln("rename " + '"' + processedWin + "\\" + thenamenoext + "-1.jpg" + '"' +" " + '"' + "Page_" + pageNumber + ".jpg" + '"')
+newFiles.push(File(scanFolder + "/"  + "Page_" + pageNumber + ".jpg"))
+ourFile =  processedFolder + "/" +  "Page_" + pageNumber + ".jpg";
+//loop through BW & col files - if there's a match, push filename into new array
+for(f=0; f <bwFiles.length;f++){
+    if(thename == bwFiles[f]){newBW.push("Page_" + pageNumber + ".jpg")}    
+    }
+    for(f=0; f <colFiles.length;f++){
+        if(thename == colFiles[f]){newCol.push("Page_" + pageNumber + ".jpg")}    
+    }
+
+
+pageCounter++;
+pageNumber=getPageNumber(pageCounter)
+}
+if(left == 1){
+    batFile.writeln( "rename " + '"' + processedWin + "\\" + thenamenoext + "-1.jpg" + '"' +" " + '"' + "Page_" + pageNumber + ".jpg" + '"')
+    newFiles.push(File(scanFolder + "/"  + "Page_" + pageNumber + ".jpg"))
+    //loop through BW & col files - if there's a match, push filename into new array
+    for(f=0; f <bwFiles.length;f++){
+    if(thename == bwFiles[f]){newBW.push("Page_" + pageNumber + ".jpg")}    
+    }
+    for(f=0; f <colFiles.length;f++){
+        if(thename == colFiles[f]){newCol.push("Page_" + pageNumber + ".jpg")}    
+    }
+    pageCounter++;
+    pageNumber=getPageNumber(pageCounter)
+    //loop through BW & col files - if there's a match, push filename into new array
+    for(f=0; f <bwFiles.length;f++){
+    if(thename == bwFiles[f]){newBW.push("Page_" + pageNumber + ".jpg")}    
+    }
+    for(f=0; f <colFiles.length;f++){
+        if(thename == colFiles[f]){newCol.push("Page_" + pageNumber + ".jpg")}    
+    }
+    batFile.writeln("rename " + '"' + processedWin + "\\" + thenamenoext + "-0.jpg" + '"' +" " + '"' + "Page_" + pageNumber + ".jpg" + '"')
+    newFiles.push(File(scanFolder + "/"  + "Page_" + pageNumber + ".jpg"))
+    ourFile =  processedFolder + "/" +  "Page_" + pageNumber + ".jpg";
+    pageCounter++;
+    pageNumber=getPageNumber(pageCounter)  
+}
+
+
+
+
+outputFile = new File(ourFile)
+
+batFile.close();
+batFile.execute();
+//batFile.remove();
+
+
+while(outputFile.length < 100){
+    outputFile = File(ourFile)
+    ourLength = outputFile.length
+        if(ourLength > 10){
+            break
+        }
+    }
+}
+$.sleep(1000)
+var batFile = File(scriptPathWin + "/Hackybat.bat");
+batFile.remove();
+
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+batFile.encoding = "UTF8";
+batFile.open("e", "TEXT", "????");
+batFile.writeln("move " + '"' + processedWin + "\\" + "*" + '"' + " " + '"'  + scanFolderWin + '"');
+batFile.writeln("rmdir " + '"' + processedWin + '"');
+batFile.close();
+batFile.execute();
+$.sleep(1000)
+
+
+
+
+currentFiles = newFiles
+currentFiles = currentFiles.sort(function (a, b) {return a.name.toString().toLowerCase().localeCompare(b.name.toString().toLowerCase());})
+colFiles =newCol;
+bwFiles = newBW;
+}
+//
 
 
 
@@ -598,12 +873,16 @@ if(bwFound == false && colFound == false){processFolder(scanFolder)
 function processFolder(scanFolder){
 
 ////Folder Variables
-
-
+var scanFolderString = scanFolder.toString()
+ scanFolderString = scanFolderString.replace(/^.*\/(.*)$/, "$1");
+ scanFolderString = scanFolderString.replace(/%20/g, " ");
+ 
 var outFolder = Folder(scanFolder + "/Out")
+//windows version needed for processing
+outFolderWin = convertPath(outFolder)
 var workFolder = Folder(scanFolder + "/Working")
 var alternateFolder = Folder(outFolder + "/Alternates")
-//descreen option folders
+
 
 
 //Check if main folders exist, if not create it.
@@ -613,10 +892,16 @@ if(saveWorkingCheck.value ==true){if(!workFolder.exists) workFolder.create();}
 
 
 
+if(currentFiles.length < 1){
+var scanfiles = scanFolder.getFiles();
+for (var i=0;i < scanfiles.length; i++){
+
+    currentFiles.push(scanfiles[i])
+}
+currentFiles = currentFiles.sort(function (a, b) {return a.name.toString().toLowerCase().localeCompare(b.name.toString().toLowerCase());});
+}
 
 //get ourfiles
-var scanfiles = scanFolder.getFiles();
-
 ////////////////////////////
 //Begin file processing -- show bar
 //////////////////////////////
@@ -627,9 +912,11 @@ var win = new Window("window{text:'Processing files...',bounds:[20,180, 0, 0]}")
 
 win.bounds.width =400;
 win.bounds.height =150;
-var progress = win.add('Progressbar', undefined, 0, scanfiles.length)
+var progress = win.add('Progressbar', undefined, 0, currentFiles.length)
 progress.bounds = [20,20,280,31]
-for (var i=0;i < scanfiles.length; i++){
+
+//Start looping through the files
+for (var i=0;i < currentFiles.length; i++){
 currentFile++
 progress.value= currentFile;
 win.show();
@@ -640,10 +927,10 @@ win.show();
 ///////////
 
 //get extentions - check we're working on an imags
-ext = scanfiles[i].fsName.slice(-3);
-if( ext == "jpg" || ext == "png" || ext == "psd" || ext == "gif" || ext == "heic"){
+ext = currentFiles[i].fsName.slice(-3);
+if( ext == "jpg" || ext == "png" || ext == "psd" || ext == "gif" || ext == "heic" || ext == "tif"){
 
-var doc = open(scanfiles[i]);
+var doc = open(currentFiles[i]);
 var basename = doc.name.match(/(.*)\.[^\.]+$/)[1];
 var difCount = 0;
 var difTotal = 0;
@@ -654,6 +941,10 @@ resizeImg(600)
 
 
 var alternateFolder = Folder(outFolder + "/Alternate")
+
+//////////Crop and Straighten
+//cropAndStraighten();
+
 
 
 //////////////////////////////////////////
@@ -696,45 +987,99 @@ if(deYellow ==4){nukeYellow()}
 ////////////////////////////////////
 
 
-if(colFound == false && bwFound == false){
-//Definitely colour
-
+thename = currentFiles[i].name;
+colOverider = 0;   
 if (colourCheck == true){
-
-processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)
+for(f=0; f <bwFiles.length;f++){if(thename == bwFiles[f]){colOverider = 1}}
+if(colOverider == 0){processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)}
+if(colOverider == 1){processbw(doc, basename, workFolder, outFolder, alternateFolder,customBWsize,customBWsharp)}
 }
-
-
 //probably black and white
 else{
-processbw(doc, basename, workFolder, outFolder, alternateFolder,customBWsize,customBWsharp)
+for(f=0; f <colFiles.length;f++){if(thename == colFiles[f]){colOverider = 1}}
+if(colOverider == 0){processbw(doc, basename, workFolder, outFolder, alternateFolder,customBWsize,customBWsharp)}
+if(colOverider == 1){processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)}
 }
 }
 
-///if col or bw folder, process appropriately 
-else{if (colFound == true){processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)}
-if(bwFound ==true){processbw(doc, basename, workFolder, outFolder, alternateFolder, customBWsize,customBWsharp)}
-}
-}
+
+
 
 win.close();
 }
+//MAKE IMAGES INTO PDF
+
+//if front cover at back, rename the cover page and put at front of new array. Re number all of the pages to take account of this change
+newArray = []
+
+if(left==0){pageNum = 1}
+if(left==1){pageNum = 2}
+
+if(frontCvrPos ==1){cvrext = processedFiles[(processedFiles.length-pageNum)].slice(-4);}
+if(frontCvrPos ==0){cvrext = processedFiles[(pageNum-1)].slice(-4);}
+
+
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+
+batFile.encoding = "UTF8";
+batFile.open("e", "TEXT", "????");
+//Front cover
+if(frontCvrPos ==1){batFile.writeln("rename " + processedFiles[processedFiles.length-pageNum] + " " + "0-Cover." + cvrext);
+newArray.push('"' + outFolderWin + "/" + "0-Cover." + cvrext)}
+if(frontCvrPos ==0){batFile.writeln("rename " + processedFiles[(pageNum-1)] + " " + "0-Cover." + cvrext);
+newArray.push('"' + outFolderWin + "/" + "0-Cover." + cvrext)}
+
+//rest of the pages
+counter = 1;
+if(frontCvrPos ==1){
+for (var i = 0; i < (processedFiles.length); i++){
+if(processedFiles[i] !== processedFiles[processedFiles.length-pageNum]){
+theExt = processedFiles[i].slice(-4)
+pageNumber = getPageNumber(counter)
+batFile.writeln("rename " + processedFiles[i] + " " + "Page_" + pageNumber + "." + theExt)
+newArray.push('"' + outFolderWin + "\\" + "Page_" + pageNumber + "." + theExt )
+counter++
 }
 
-if (onethirtyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 130: " + onethirtyArr + "\n")}
-if (oneFiftyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 150: " + oneFiftyArr + "\n")}
-if (oneSeventyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 170: " + oneSeventyArr + "\n")}
-if (twoHundreArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 200: " + twoHundreArr + "\n")}
+}
+}
+if(frontCvrPos ==0){
+    for (var i = 0; i < (processedFiles.length); i++){
+        if(processedFiles[i] !== processedFiles[pageNum-1]){
+        theExt = processedFiles[i].slice(-4)
+        pageNumber = getPageNumber(counter)
+        batFile.writeln("rename " + processedFiles[i] + " " + "Page_" + pageNumber + "." + theExt)
+        newArray.push('"' + outFolderWin + "\\" + "Page_" + pageNumber + "." + theExt )
+        counter++
+        }
+    }
+}
 
-if (errArray.length > 0){alertMSG = "Images have been processed!\n\n I Processed " + (colImages.length + bwImages.length) + " images of which: \n\n" + colImages.length + " were colour and " + bwImages.length + " were black and white.\n\n" + "There were also the following Errors: " + errArray.toString()}
+batFile.close();
+batFile.execute();
+$.sleep(3000)
+processedFiles = newArray;
 
-if(errArray.length == 0){alertMSG = "Images have been processed!\n\n I Processed " + (colImages.length + bwImages.length) + " images of which: \n\n " + colImages.length + " were colour and " + bwImages.length + " were black and white."}
 
-if(debug == 1){ alertMSG = alertMSG + "\n\n Black and White Images: " + bwImages + " Means: " + histoMeansarr}
+processedFiles = processedFiles.join(' ');
+
+if(bindpdf ==1){
+
+scanFolderpath = convertPath(scanFolder)
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+batFile.encoding = "UTF8";
+batFile.open("w", "TEXT", "????");
+batFile.writeln('"' + pdftkWin + '"' + " " + processedFiles + " cat output " + '"' + scanFolderpath + "\\" + scanFolderString + ".pdf" + '"')
+batFile.close()
 
 
-alert(alertMSG)
 
+batFile.execute()
+
+}
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+processedFiles = [];
+currentFiles = []
 }
 ///////////////////////////////////////////////////
 ////////////////////////Main Script functions end Ends
@@ -760,9 +1105,6 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     //Mid Levels
     if((getHistoMean(0) + getHistoMean(1) + getHistoMean(2)) > 150){} 
-    app.displayDialogs = DialogModes.NO
-    
-    app.displayDialogs = DialogModes.ERROR
     
     
     
@@ -780,48 +1122,56 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     if ((newAverage - average) > -15 && (newAverage - average ) < 15){}
     else{setLevels(31,1,220)}
     }
+
     app.displayDialogs = DialogModes.NO
-    if(((getHistoMean(0) + getHistoMean(1) + getHistoMean(2))/3) <225){convertToRGB()} 
+    try{if(((getHistoMean(0) + getHistoMean(1) + getHistoMean(2))/3) <225){try{convertToRGB()}catch(err){ }}
     else{
-        doc.convertProfile("Dot Gain 20%", Intent.RELATIVECOLORIMETRIC, true, true)}
-    
+    try{app.activeDocument.convertProfile("Dot Gain 20%", Intent.RELATIVECOLORIMETRIC, true, true)}catch(err){}};
+    }catch(err){}
+    app.displayDialogs = DialogModes.ERROR;
     doc.activeLayer = doc.layers[doc.layers.length-1]
     doc.bitsPerChannel = BitsPerChannelType.SIXTEEN;
-    if (custombw == false){
-        
-    try{
+    if (custombw == false){   
+    
     //if auto screen works, save in the auto folder then save working folder and we're done!
-    if(DescreenOn !== false){deScreenAuto()}
+    if(DescreenOn !== false){
+    try{deScreenAuto();
     applyHighPass(2);
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
-    if(DescreenOn == false){var outfile = new File(outFolder + "/" + basename + "_nosattva.jpg")}
-    else(outfile = new File(outFolder + "/" + basename + ".jpg"))
-    saveJPG(doc,outfile)
+    nosattfile = 0
+    if(DescreenOn == false){var outfile = new File(outFolder + "/" + basename + "_nosattva.tif");nosattfile = 1}
+    else(outfile = new File(outFolder + "/" + basename + ".tif"))
+  
+    savetiff(doc,outfile)
+    
+    //OCR TIff
+    if(nosattfile == 0){ocrOutput(outFolderWin,outFolder + "/" + basename, ".tif", basename)}
+    if(nosattfile == 1){ocrOutput(outFolderWin,outFolder + "/" + basename, ".tif", basename+"_nosattva.tif");nosattfile=0;}
+
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
-    doc.close(SaveOptions.DONOTSAVECHANGES);
+    doc.close(SaveOptions.DONOTSAVECHANGES); 
     }
     catch(err){
-    if(!alternateFolder.exists) alternateFolder.create();
    
-      
-    
-    
+    if(!alternateFolder.exists) alternateFolder.create();
     try{
     var no130 = 0;
-        multipleDescreenbw(doc, basename + "_133", 133, outFolder)}
+        multipleDescreenbw(doc, basename + "_133", 133, outFolder);ocrOutput(outFolderWin, outFolder + "/" + basename + "_133",".tif", basename + "_133");
+    }
     catch(err){onethirtyArr.push(basename);no130=1;}
     
     try{if (no130==0){multipleDescreenbw(doc, basename + "_150", 150, alternateFolder)}
-        else{multipleDescreenbw(doc, basename + "_150", 150, outFolder)}
-}
-    catch(err){oneFiftyArr.push(basename);if (no130==1){var outfile = new File(outFolder + "/" + basename + "_nosattva.jpg");saveJPG(doc,outfile)}}
+        else{multipleDescreenbw(doc, basename + "_150", 150, outFolder);}}
+    catch(err){oneFiftyArr.push(basename);if (no130==1){var outfile = new File(outFolder + "/" + basename + "_nosattva.tif");savetiff(doc,outfile);
+    ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename + "_nosattva");}}
     
     try{multipleDescreenbw(doc, basename + "_170", 170, alternateFolder)}
     catch(err){oneSeventyArr.push(basename)}
     
     try{multipleDescreenbw(doc, basename + "_200", 200, alternateFolder)}
     catch(err){twoHundreArr.push(basename)}
+}
     workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
     try{doc.close(SaveOptions.DONOTSAVECHANGES);}
@@ -837,22 +1187,28 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
         doc.bitsPerChannel = BitsPerChannelType.EIGHT;
         workingfile = new File(workFolder + "/" + basename + ".psd");
         if (saveWorkingCheck.value == true){SavePSD(workingfile)}
-        outfile = new File(outFolder + "/" + basename + "_custom.jpg")
-        saveJPG(doc,outfile)
+        outfile = new File(outFolder + "/" + basename + "_custom.tif")
+        savetiff(doc,outfile)
+        //OCR TIff
+        ocrOutput(outFolderWin, outFolder + "/" + basename + "_custom", ".tif", basename + "_custom.tif")
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
     catch(err){alert(err);custombw=false; processbw(doc, basename, workFolder, outFolder,alternateFolder,customBWsize,customBWsharp)}
     
     
     }
+    try{purgeMemory()}
+    catch(err){}
     }
+    
+
     
     
     ////////////////////////////////////////////////////////////////
     /////////////Process Colour
     /////////////////////////////////////////////////////////////////
     function processCol(theDoc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity){
-    doc = theDoc;
+    doc = app.activeDocument;
     colImages.push(basename)
     convertToRGB()
     if(levelsRGB == false){
@@ -885,8 +1241,10 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
     workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
-    outfile = new File(outFolder + "/" + basename + "_custom.jpg")
-    saveJPG(doc,outfile)
+    outfile = new File(outFolder + "/" + basename + "_custom.tif")
+    savetiff(doc,outfile)
+    //OCR TIff
+    ocrOutput(outFolderWin, outFolder + "/" + basename + "_custom", ".tif", basename + "_custom")
     doc.close(SaveOptions.DONOTSAVECHANGES);
     }    
     catch(err){ customCol=false; processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)}
@@ -899,9 +1257,13 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     applyHighPass(2);
     SmartSharp(ssPercent, ssPixel,ssNoiseReduction,ssBlur,sShdAmnt, sShdWdth, shghAmnt, sghwdth)
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
-    if(DescreenOn == false){outfile = new File(outFolder + "/" + basename + "_noSattva.jpg")}
-    else{outfile = new File(outFolder + "/" + basename + ".jpg")}
-    saveJPG(doc,outfile)
+    nosattfile = 0
+    if(DescreenOn == false){outfile = new File(outFolder + "/" + basename + "_noSattva.tif"); nosattfile = 1;}
+    else{outfile = new File(outFolder + "/" + basename + ".tif")}
+    savetiff(doc,outfile)
+    if(nosattfile ==0){ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename)}
+    if(nosattfile ==1){ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename + "_noSattva");nosattfile=0}
+  
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
     doc.close(SaveOptions.DONOTSAVECHANGES);
@@ -915,13 +1277,15 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     multipleDescreenCol(doc, basename+ "_133", 133, 1, true, 0, 0, alternateFolder)}
     catch(err){onethirtyArr.push(basename)}
     
-    try{multipleDescreenCol(doc,basename+"_150",150, 1, true, 0, 0, outFolder)}
+    try{
+        multipleDescreenCol(doc,basename+"_150",150, 1, true, 0, 0, outFolder);
+    ocrOutput(outFolderWin, outFolder + "/" + basename + "_150", ".tif", basename + "_150");}
     catch(err){oneFiftyArr.push(basename);no150=1}
     
     
     try{if (no150==0){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, alternateFolder)}
-        else{multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, outFolder)}}
-    catch(err){oneSeventyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.jpg")}
+    if (no150==1){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, outFolder);ocrOutput(outFolderWin,outFolder + "/" + basename + "_170", ".tif", basename + "_170");}}
+    catch(err){oneSeventyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.tif");ocrOutput(outFolderWin,outFolder + "/" + basename + "_noSattva", ".tif", basename + "_noSattva");}
     
     try{multipleDescreenCol(doc,basename + "_200",200, 1, true, 0, 0, alternateFolder)}
     catch(err){twoHundreArr.push(basename)}
@@ -930,8 +1294,13 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
     doc.close(SaveOptions.DONOTSAVECHANGES);
     }
+  
+}
+    //after each file, purge cache 
+    try{purgeMemory();}
+    catch(err){}
     }
-    }
+
     
     ////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////
@@ -996,8 +1365,8 @@ SmartSharp(ssPercent, ssPixel,ssNoiseReduction,ssBlur,sShdAmnt, sShdWdth, shghAm
 
 
 doc.bitsPerChannel = BitsPerChannelType.EIGHT;
-var outfile = new File(folder + "/" + basename + ".jpg")
-saveJPG(doc,outfile)
+var outfile = new File(folder + "/" + basename + ".tif")
+savetiff(doc,outfile)
 doc.activeHistoryState = savedState
 doc.activeLayer = doc.layers[doc.layers.length-1]
 
@@ -1023,8 +1392,8 @@ doc.bitsPerChannel = BitsPerChannelType.EIGHT;
 
 
 
-var outfile = new File(folder + "/" + basename + ".jpg")
-saveJPG(doc, outfile)
+var outfile = new File(folder + "/" + basename + ".tif")
+savetiff(doc, outfile)
 doc.activeHistoryState = savedState
 doc.activeLayer = doc.layers[doc.layers.length-1]
 }
@@ -1287,14 +1656,12 @@ function SavePSD(saveFile){
     }; 
 
     //save jpg
-function saveJPG(doc, saveFile){
-var jpgOptions = new JPEGSaveOptions();
-jpgOptions.quality = 10;
-jpgOptions.embedColorProfile = true;
-jpgOptions.formatOptions = FormatOptions.PROGRESSIVE;
-jpgOptions.scans = 5;
-
-doc.saveAs (saveFile, jpgOptions, true, Extension.LOWERCASE);}
+function savetiff(doc, saveFile){
+tiffSaveOptions = new TiffSaveOptions();
+tiffSaveOptions.embedColorProfile = true;
+tiffSaveOptions.imageCompression = TIFFEncoding.JPEG;
+tiffSaveOptions.layers = false;
+doc.saveAs (saveFile, tiffSaveOptions, true, Extension.LOWERCASE);}
 
 /////////////////////////////////////////////////////////////
 //////////////////////////////////////////////
@@ -1854,13 +2221,13 @@ function convertToCmyk(){
 app.displayDialogs = DialogModes.NO
 try{
     app.activeDocument.convertProfile("SWOP (Coated), 20%, GCR, Medium", Intent.RELATIVECOLORIMETRIC, true, true)}
-catch(err){app.activeDocument.changeMode(ChangeMode.CMYK)}
+catch(err){try{app.activeDocument.changeMode(ChangeMode.CMYK)}catch(err){}}
 app.displayDialogs = DialogModes.ERROR
 }
 function convertToRGB(){
 app.displayDialogs = DialogModes.NO
 try{app.activeDocument.convertProfile("sRGB IEC61966-2.1", Intent.RELATIVECOLORIMETRIC, true, true)}
-catch(err){doc.ChangeMode.RGB;}
+catch(err){try{app.activeDocument.changeMode(ChangeMode.RGB);}catch(err){}}
 app.displayDialogs = DialogModes.ERROR
 }
 
@@ -2085,10 +2452,150 @@ executeAction( idLvls, desc240, DialogModes.NO );
 //////////////////////////////////
 /////////////////////////
 
+///////CropandStraighten///
+function cropAndStraighten(){
+	var id333 = stringIDToTypeID( "CropPhotosAuto0001" );
+	executeAction( id333, undefined, DialogModes.NO );
+}
+///////////////////////////////////////////////////////
+
+function convertPath(path){
+pathString = path.toString()
+drive=pathString[1]
+pSsliced = pathString.substring(3)
+WinPath = drive + ":\\" + pSsliced
+WinPath = WinPath.replace(/\//g, '\\' );
+WinPath = WinPath.replace(/%20/g, " ");
+return WinPath
+}
+
+//OCR Image and save as pdf
+function ocrOutput(outFolderWin, path, ext, filename){
+
+thepath = convertPath(path)
+
+thefile = new File(thepath + ext)
+if(ocrpdf == 1){
+
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+batFile.encoding = "UTF8";
+batFile.open("e", "TEXT", "????");
+//finalFile = thepath + ".pdf"
+batFile.writeln("rename " + '"' + thepath + ext + '"' + " " + "tempfile.tif")
+if(preserveInterword ==1){batFile.writeln('"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " -c preserve_interword_spaces=1 pdf");}
+if(preserveInterword ==0){'"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile.pdf" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " pdf"}
+batFile.writeln("del " + '"' + outFolderWin + "\\tempfile.tif" + '"')
+batFile.writeln("rename " + '"' + outFolderWin + "\\tempfile.pdf" + '"' +  " " + '"' + filename + ".pdf" + '"')
+
+batFile.close()                        
+batFile.execute()
+outputFile = new File(thepath + ".pdf")
+ourLength = outputFile.length;
+//$.sleep(timeoutLength)
 
 
 
+    while(outputFile.length < 100){
+        ourLength = outputFile.length;
+        if(ourLength > 100){
+            break
+        }
+    }
 
+batFile.remove()
+outputFile = convertPath(outputFile)
+processedFiles.push(('"' + outputFile + '"'));
+thefile.remove();}
+}
+
+
+
+//run commands via hacky batch files
+function createBat(command){
+var batFile = new File(scriptPathWin + "/Hackybat.bat");
+batFile.encoding = "UTF8";
+batFile.open("e", "TEXT", "????");
+batFile.writeln(command);
+batFile.close();
+return batFile
+    
+
+}
+
+//Purge Memory
+function purgeMemory(){
+var idPrge = charIDToTypeID( "Prge" );
+    var desc242 = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+    var idPrgI = charIDToTypeID( "PrgI" );
+    var idAl = charIDToTypeID( "Al  " );
+    desc242.putEnumerated( idnull, idPrgI, idAl );
+executeAction( idPrge, desc242, DialogModes.NO );
+}
+
+//check if even or odd
+function isOdd(n) {
+    if(n == 0){return false}
+    return Math.abs(n % 2) == 1;
+ }
+
+///////////////////////////Get Page Number///////
+//////////(returns current page number as 4 character number)
+function getPageNumber(pageCounter){
+    if(pageCounter < 10000){pageNumber = pageCounter;}
+    if(pageCounter < 1000){pageNumber = "0" + pageCounter;}
+    if(pageCounter < 100){pageNumber = "00" + pageCounter;}
+    if(pageCounter < 10){pageNumber = "000" + pageCounter;}
+    return pageNumber
+    }
+
+//Get Language from dropdown
+function getLang(Lang){
+if(Lang.selection.text == "English"){return "eng"}
+if(Lang.selection.text == "Japanese"){preserveInterword = 1;return "japanese"}
+if(Lang.selection.text == "Spanish"){return "spa"}
+if(Lang.selection.text == "French"){return "fra"}
+if(Lang.selection.text == "German"){return "deu"}
+if(Lang.selection.text == "Custom"){return "none"}
+    }
+
+//Add black & white/Colour files to respective array, move into folder
+function getSubFolderfiles(folder, col, scanFolder){
+    var tempScanFiles = folder.getFiles();
+    for (var s=0;s < tempScanFiles.length; s++){
+    var basename = tempScanFiles[s].name.match(/(.*)\.[^\.]+$/)[1];
+
+    if(col ==0){bwFiles.push(basename + ".jpg")}
+    if(col ==1){colFiles.push(basename + ".jpg")}
+
+    scanFolderWin = convertPath(scanFolder)
+    colFolderWin = convertPath(folder)
+    var batFile = new File(scriptPathWin + "/Hackybat.bat");
+    batFile.encoding = "UTF8";
+    batFile.open("e", "TEXT", "????");
+    batFile.writeln("move " + '"' + colFolderWin + "\\" + "*" + '"' + " " + '"'  + scanFolderWin + '"');
+    batFile.writeln("rmdir " + '"' + colFolderWin + '"');
+    batFile.close();
+    batFile.execute();
+    $.sleep(1000)
+    batFile.remove()
+}
+}
+function displayEndmsg(){
+    if (onethirtyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 130: " + onethirtyArr + "\n")}
+if (oneFiftyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 150: " + oneFiftyArr + "\n")}
+if (oneSeventyArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 170: " + oneSeventyArr + "\n")}
+if (twoHundreArr.length > 0){errArray.push("\nFollowing Images couldn't be descreened at 200: " + twoHundreArr + "\n")}
+
+if (errArray.length > 0){alertMSG = "Images have been processed!\n\n I Processed " + (colImages.length + bwImages.length) + " images of which: \n\n" + colImages.length + " were colour and " + bwImages.length + " were black and white.\n\n" + "There were also the following Errors: " + errArray.toString()}
+
+if(errArray.length == 0){alertMSG = "Images have been processed!\n\n I Processed " + (colImages.length + bwImages.length) + " images of which: \n\n " + colImages.length + " were colour and " + bwImages.length + " were black and white."}
+
+if(debug == 1){ alertMSG = alertMSG + "\n\n Black and White Images: " + bwImages + " Means: " + histoMeansarr}
+
+
+alert(alertMSG)
+}
 
 //////////////////GA Logo
 

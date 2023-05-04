@@ -1,0 +1,46 @@
+
+==========================
+ PDFTK Builder Enhanced
+==========================
+
+Author: David King
+Copyright (c) 2017-2021, David King
+Copyright (c) 2005-2018, Angus Johnson
+
+PDFTK Builder Enhanced is a GUI for the Windows version of PDF Toolkit (PDFtk) command line tool, 
+PDFtk Server, by Sid Steward (see below).  Releases are identified as PDFTK Builder Version 4 as it 
+is a modification of Version 3 of PDFTK Builder by Angus Johnson (http://www.angusj.com/pdftkb/).
+
+The binary, source code and documentation for PDFTK Builder Enhanced can be found at:
+http://
+
+Documentation and an unmodified copy of the Windows executable for PDFtk Server v2.02 (pdftk.exe) 
+is included in the distribution of PDFTK Builder Enhanced.
+
+You are free to use, modify and/or distribute this software under the terms of the GNU General 
+Public License (GPL), Version 3.  The complete text of the GNU GPL can be found at: 
+http://www.gnu.org/copyleft/gpl.html
+
+
+===================
+    PDFtk Server
+===================
+
+Author: Sid Steward
+Copyright (c) 2004-14, Steward and Lee, LLC
+
+PDFtk Server is cross-platform command line tool for working with PDFs.   
+
+The binary, source code, documentation and additional licensing information for PDFTK Server 
+can be found at:
+https://www.pdflabs.com/tools/pdftk-server/
+
+You are free to use, modify and/or distribute this software under the terms of the GNU General 
+Public License (GPL), Version 2.  The complete text of the GNU GPL can be found at: 
+https://www.pdflabs.com/docs/pdftk-license/gnu_general_public_license_2.txt
+
+If you wish to distribute PDFtk Server as part of a commercial product or software which is not 
+licensed under the GPL or another compatible license, purchase of a PDFtk Server Redistribution 
+License is required. Further information on PDFtk Server licensing can be found at:
+https://www.pdflabs.com/docs/pdftk-license/
+

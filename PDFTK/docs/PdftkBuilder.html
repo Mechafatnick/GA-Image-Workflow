@@ -1,0 +1,448 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<TITLE>HelpFile-PDFTK Builder</TITLE>
+<META NAME="description" CONTENT="Freeware PDFTK Builder utility">
+<META name="keywords" content="freeware, Windows utility, portable app, PDF, PDF utility, PDF tool, PDFTK, GUI, split, merge, rotate, encrypt">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Language" content="en-au">
+<STYLE type="text/css"><!-- 
+    body  {
+      BACKGROUND-COLOR: #E0E0E0;
+      text-align: center;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+    }
+    body, td, th {
+      margin: 20px auto 20px auto;
+      font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+        font-size: 80%;  /*this seems consistent across modern browsers*/
+      }
+    a   {
+      text-decoration: none;
+      font-weight: bold;
+      }
+    h1  {
+      font-size: 2.0em;
+      font-weight: bold;
+      margin: 0.2em 0em;
+      COLOR: #46845F;
+      }
+    h2  {
+      font-size: 1.7em;
+      margin: 0.2em 0em;
+      font-weight: bold;
+      }
+    h3  {
+      font-size: 1.5em;
+      margin: 0.2em 0em;
+      font-weight: normal;
+      }
+    TD.menu {BACKGROUND-COLOR: #D8D8B8; TEXT-ALIGN: center}
+    B {COLOR: #000099}
+    H2 {COLOR: #009999}
+    .caption {BACKGROUND-COLOR: #BACBDA; font-size: 1.3em; font-weight: bold; color: #000066}
+    .maroonbold {color: maroon; font-weight: bold;} 
+--></STYLE>
+</HEAD>
+
+<BODY>
+<DIV align=center>
+<!-- table to create black border (change border to 1)-->
+<TABLE cellSpacing=0 cellPadding=0 border=0> <TR><TD>
+
+<!-- main table (pale background) -->  
+<TABLE cellPadding=10 width=800 border=0>
+<TR><TD>
+    
+<H1>PDFTK Builder Enhanced</H1><br>
+<strong>Version:</strong> 4.1.6<br>
+<strong>Date:</strong>  28 May 2021<br>
+<strong>Platform:</strong>  Windows 32-bit application<br>
+<strong>Compiler:</strong> Delphi 10.2<br>
+<strong>Authors:</strong>  David King (4.0.0-4.1.6), Angus Johnson (2.3.1-3.10.0)<br>
+<strong>Copyright</strong> © 2017-2021, David King; © 2005-2018, Angus Johnson<br>
+<strong>License:</strong>  GNU General Public License (GPL), version 3<br>
+<strong>Dependencies:</strong>  PDFtk Server v2.02; installed PDF viewer<br><br>
+
+PDFTK Builder is a free, graphical user interface (GUI) for the Windows version of the popular PDF ToolKit (PDFtk) command line tool, <a href="http://www.pdflabs.com/tools/pdftk-server/" target="_blank">PDFtk Server by Sid Steward</a>.<br><br>  
+
+This project modifies Version 3 of <a href="http://www.angusj.com/pdftkb/" target="_blank">PDFTK Builder by Angus Johnson</a> to: <strong>(1)</strong> enhance the user interface, <strong>(2)</strong> add PDF operations and options and <strong>(3)</strong> update the program to be compatible with later versions of PDFtk (v2.02 supplied).  It assumes that a PDF viewer is already installed for displaying .pdf files.<br><br>
+
+The following screenshot shows the updated main form of PDFTK Builder with the 'Join Files' tab sheet active. The form consists of: <strong>(1)</strong> an input section on five tab sheets for performing various operations with PDFtk, <strong>(2)</strong> a 'Document Protection' panel which can be toggled open/closed and is used for setting passwords and permissions to be applied to output PDF files, and <strong>(3)</strong> an output section with buttons to build and access the resulting PDF file and to exit the program.  A menu and status bar are also located at the top and bottom of the form.  In a typical use case, the user will select the source PDF file(s) and specify page ranges, modify (if needed) security settings to be applied to the output file(s), and then press the 'Build' button to generate the output PDF document(s) or text report.<br><br><br>
+
+<center><img src="pdftkb.png" alt="PDFTK Builder Join Files Screenshot" title="PDFTK Builder Join Files Screenshot" border="0"><br><strong>'Join Files' Tab with Doc Protection Panel open</strong></center><br><br>
+
+Buttons and other controls on the form can be accessed by clicking on them with a mouse or by entering the applicable shortcut key, Alt-X, where X is the underlined letter in the caption of the control.  (Note: The 'Alt' is actually optional as long as a control expecting text to be entered, such as an edit box, does not have the focus.)<br><br>  
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>TAB SHEETS</strong></h3><br><br>
+
+<strong>Join Files</strong> - Use ‘Join Files’ (Alt-J) to combine pages from multiple PDF documents or to rearrange, duplicate, delete or extract pages of a single document.  The default method for joining files uses the PDFtk 'cat' (catenate) command to collate the pages from the input files in the order they are listed in the 'Source PDF Documents' window. An optional 'Interleave' method uses the PDftk 'shuffle' command to interleave the pages from separate PDF scans of the odd and even pages of a document.<br><br>
+
+Input PDF files can be added to the 'Source PDF Document(s)' list either via <strong>(1)</strong> 'Add' button (Alt-A) which pops up a Windows open file dialog or <strong>(2)</strong> drag and drop from Windows Explorer.  Both methods support selection of multiple PDF files.  Added files are always appended to the end of the source documents list.  A copy of the selected files can be added by typing Alt-Shift-A.  The order of files in the list can be changed via the Sort, Move Up (Alt-U) and Move Down (Alt-D) buttons.  The selected file can be moved to the top or bottom of the list by typing Alt-Shift-U or -D.<br><br>  
+
+Particular pages of a file are specified by selecting the file in the list and then entering page ranges in the 'Pages' box below the list.  Page entries can take the form of a single page number or a range of pages consisting of the start and end page numbers separated by a hyphen. Multiple page selections can be entered by separating them by commas or semi-colons with or without spaces; e.g., 1,4-7; 9,11 - 20.  Leaving the 'Pages' box blank keeps the default, all pages in their original order.  When adding files to the list, the 'View-1" button (Alt-1) is useful for verifying that the file is the correct one and which specific pages need to be retained or modified (e.g., rotated or omitted).  The selected file can also be viewed by double-clicking on the file in the source documents list.<br><br>
+
+A 'P' in the right column of the list indicates that specific pages (P) have been entered by the user. A 'T' indicates that the displayed file name has been truncated (T) from its center.  When a PDF document is selected, its file name, page count (in parentheses) and the entered pages will be displayed on the line below the list.  The 'Mode' button above the list will toggle the list between displaying <strong>(1)</strong> the file name only (default) or <strong>(2)</strong> the fully qualified file name, including drive and folder.  The 'Reset" button clears the list; the adjacent 'All' button resets all tab sheets.<br><br>
+
+When the 'Build' button (Alt-B) is clicked, the pages of the merged document will be output in the order of the files in the source documents list and the pages selected within each file.  Note that in the above example, the first file is listed twice because pages from the second file are being inserted between pages of the first file.<br><br><br>
+
+<center><img src="pdftkb_context_menu.png" alt="PDFTK Builder Context Menu Screenshot" title="PDFTK Builder Context Menu Screenshot" border="0"><br><strong>'Join Files' Context Menu with Doc Protection Panel closed</strong></center><br><br>
+
+A selected source document can be forwarded from the 'Join Files' list to another tab sheet by typing the accelerator key for the destination tab sheet along with the Shift key; i.e., Alt-Shift-S, -M, -R or -T or by right-clicking and picking the desired function from the <strong>context menu</strong>. Other functions available from the context menu include extracting pages from the selected file and displaying its Windows file properties.   These functions are available only while the 'Join Files' tab sheet is active.<br><br>
+
+<center>
+<table cellspacing="2" cellpadding="2" border="0">
+<tr>
+  <td width="100px" valign="top"><strong>Menu Item</strong></td>
+  <td width="100px" valign="top"><strong>Hot Keys</strong></td>
+  <td width="500px" valign="top"><strong>Function of Context Menu Item</strong></td>
+</tr>
+<tr>
+  <td valign="top"><u>V</u>iew File</td>
+  <td valign="top">V</td>
+  <td valign="top">Open/view the selected file in the assigned or default PDF application (same as View button)</td>
+</tr>  
+  <td><u>L</u>ocate File</td>
+  <td>L</td>
+  <td>Open the location/folder of the selected file in Windows Explorer with the file selected</td>
+</tr>
+<tr>  
+  <td><u>C</U>opy Path</td>
+  <td>C</td>
+  <td>Copies the full path of the selected file to the clipboard</td>
+</tr>
+<tr>  
+  <td><u>E</u>xtract Pages</td>
+  <td>E</td>
+  <td>Save the pages listed in the Pages box for the selected document to a file</td>
+</tr>
+<tr>  
+  <td><u>S</u>plit File</td>
+  <td>S, Alt-Shift-S</td>
+  <td>Switch to the Split File tab with the selected file as the source PDF document</td>
+</tr>
+<tr>  
+  <td><u>M</u>ark Pages</td>
+  <td>M, Alt-Shift-M</td>
+  <td>Switch to the Mark Pages tab with the selected file as the source PDF document</td>
+</tr>
+<tr>  
+  <td><u>R</u>otate Pages</td>
+  <td>R, Alt-Shift-R</td>
+  <td>Switch to the Rotate Pages tab with the selected file as the source PDF documen</td>
+</tr>
+<tr>  
+  <td><u>T</u>ool Sets</td>
+  <td>T, Alt-Shift-T</td>
+  <td>Switch to the Tool Sets tab with the selected file as the source PDF document</td>
+</tr>
+<tr>  
+  <td><u>P</u>roperties</td>
+  <td>P</td>
+  <td>Display the Windows file properties dialog for the selected file</td>
+</tr>
+
+</table>
+</center>
+<br><br>
+
+
+<strong>Split File</strong> - Use ‘Split File’ (Alt-S or Ctrl-S) to burst a single source PDF document into a separate (numbered) PDF file for each page.  The default is to output all pages of the source document; however, a smaller page range may be specified by the user. The output folder for individual page files defaults to the same folder as the source PDF; however, clicking on the 'Change Output Folder ...' button will provide a dialog to select a different folder or subfolder.  The resulting PDF files will have the name of the input file with a suffix, _nnnn, indicating the page number.  Although selecting multiple pages will produce multiple output files, only the name, number of pages and size of the file for the last page will be displayed in the status bar at the bottom of the form.  The 'Split File' function also has 'Odd/Even' checkbox for selecting an option for splitting the file into two files containing the odd and even numbered pages.<br><br><br>
+
+<center><img src="pdftkb_split.png" alt="PDFTK Builder Split File Screenshot" title="PDFTK Builder Split File Screenshot" border="0"><br><strong>'Split File' Tab</strong></center><br><br>
+
+The above screenshot shows the 'Split File' tab sheet with the 'Document Protection' panel closed.  The screenshot also illustrates how checking the 'Use Join Files List' checkbox above the 'Source PDF Document ..' button allows documents to be taken sequentially from the Join Files list each time the 'Source PDF Document ..' button is clicked. Also shown are the  '>' buttons on the right and left of the 'Source PDF Document ..' button which will copy the full path for the current source document to the Windows clipboard and from the clipboard to the 'Source PDF Document' field respectively, allowing file paths to be copied between tab sheets or directly from Windows Explorer (use Shift right click, Copy as path).  These optional controls for selecting the source PDF file are also present on the 'Mark Pages', 'Rotate Pages', and 'Tool Sets' tab sheets.  Individual source PDF files can also be selected via a drag and drop from Windows Explorer and where applicable, secondary input files (e.g., Stamp PDF File on 'Mark Pages' tab or Attachment File on 'Tool Set' tab) can also be dragged and dropped onto the form by holding down the Alt or Shift key while doing so.<br><br>   
+
+<strong>Mark Pages</strong> - 'Mark Pages' (Alt-M or Ctrl-M) supports three functions: Stamp, Background and Number Pages.  Stamp and Background overlay and underlay the pages of the source PDF document with a single page or multi-page stamp or background PDF, respectively.  Number pages applies page numbers and/or text to the source document with options for page orientation (Portrait/Landscape) and number position (Top-Bottom/Left-Center-Right).  If the '+/-' button next to the 'Number Pages' radio button will toggle the the display between the basic page numbering options and additional options for the page range, starting number, and prefix/suffix text as shown in the screnshot below.  Settings for paper size and page number position are configured in the PdftkBuilder.ini file.<br><br><br>
+
+<center><img src="pdftkb_number.png" alt="PDFTK Builder Number Pages Screenshot" title="PDFTK Builder Number Pages Screenshot" border="0"><br><strong>'Mark Pages' Tab with Number Pages (Extended Options) selected</strong></center><br><br>
+
+<strong>Rotate Pages</strong> - Use ‘Rotate Pages’ (Alt-R or Ctrl-R) to rotate the specified page ranges in a single source PDF document by 90&deg; right, 90&deg; left or by 180&deg;.  Options are also available on the 'Rotate Pages' tab sheet to extract or delete the specified page ranges.<br><br><br>
+
+<center><img src="pdftkb_rotate.png" alt="PDFTK Builder Rotate Pages Screenshot" title="PDFTK Builder Rotate Pages Screenshot" border="0"><br><strong>'Rotate Pages' Tab</strong></center><br><br>
+
+<strong>Tool Sets</strong> - ‘Tool Sets’ (Alt-T or Ctrl-T) provides access to additional PDFtk operations and external PDF applications.  There are currently 15 tools (plus one spare), arranged in four sets of four items each.  Click on the left or right 'Set' number button to move forward or backward through tool sets 1-4.<br><br>
+
+<center>
+<table cellspacing="2" cellpadding="2" border="0">
+<tr>
+  <td width="100px" valign="top" align="center"><strong>Set</strong></td>
+  <td width="600px" valign="top"><strong>Tool/Function</strong></td>
+</tr>
+
+<tr>
+  <td valign="top" align="center">1</td>
+  <td><strong>Dump Data</strong> - Lists (dumps) the metadata, page metrics and bookmarks of the source PDF document in a text dump file (_data.txt).  The PDF file is not modified. The resulting .txt file can be edited and then used to modify the PDF data with the 'Update Info' tool. </td>
+</tr>  
+  <td></td>
+  <td><strong>Update Info</strong> - Updates metadata and bookmarks of a PDF file with data from its corresponding updated _data.txt file.
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Attach File</strong> - Attaches a single file to a PDF document.  Repeat the process to attach additional files.</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Unpack Files</strong> - Copies attached files to a user-specified folder without removing attachments from the PDF document.<br><br></td>
+</tr>
+
+
+<tr>
+  <td valign="top" align="center">2</td>
+  <td><strong>Decrypt</strong> - Decrypts a single encrypted source PDF file.  Owner password must be supplied.
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Repair</strong> - Takes a single corrupted source PDF file and a outputs new PDF file in filter mode, applying all output options and regenerating XREF table and streams in an attempt to repair the file.</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Uncompress</strong> - Removes PDF page stream compression (only useful if you want to view or modify PDF page code with a text editor).</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Compress</strong> - Restores normal PDF page stream compression (see Uncompress).<br><br></td>
+</tr>
+
+
+<tr>
+  <td valign="top" align="center">3</td>
+  <td><strong>Dump Fields</strong> - Outputs the field specs (e.g., name, type) of PDF form to a _fields.txt file.</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Gen</strong>(erate) <strong>FDF</strong> - Writes values of fields of PDF form to Form Data Format text file (_fdf.txt).</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Fill Form</strong> - Updates the fields of source PDF form with values from its corresponding _fdf.txt file.</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Flatten</strong> - Merges fields and PDF form together so that fields can no longer be extracted or filled in.<br><br></td>
+</tr>
+
+
+<tr>
+  <td valign="top" align="center">4</td>
+  <td><strong>Advanced</strong> - Allows editing and submission of a command to PDFtk.  Provides access to the full range of PDFtk operations and options but requires knowledge of PDFtk command syntax.<br></td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Launch</strong> - Launches an external app (configured in .ini file) using the source PDF document on the Tool Set tab sheet as the input PDF file.</td>
+<tr>
+  <td></td>
+  <td><strong>Compare</strong> - Compares the text of the source PDF document and secondary input PDF file using an external diff application such as WinMerge with xdocdiff plugin (configured in the .ini file).</td>
+</tr>
+<tr>
+  <td></td>
+  <td><strong>Spare</strong> - Spare.</td>
+</tr>
+
+</table>
+</center>
+<br><br>
+
+<center><img src="pdftkb_compare.png" alt="PDFTK Builder Compare Screenshot" title="PDFTK Builder Compare Screenshot" border="0"><br><strong>Tool Set 4 with Compare PDF Text selected</strong></center><br><br>
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>BUTTONS</strong></h3><br>
+
+<strong>Build</strong> - ‘Build' (Alt-B) generates the specified output and prompts for a name for saving the PDF file if applicable.<br><br>
+
+<strong>View</strong> - ‘View’ (Alt-V, -1, -2) opens the output or input 1 (or 2) PDF file in the default or configured PDF app.<br><br>
+
+<strong>Locate</strong> - ‘Locate’ (Alt-L) opens the location (destination folder) of the output PDF file with the file selected.<br><br>
+
+<strong>Pipe</strong> - ‘Pipe’ (Alt-I) copies the name of the latest output PDF file to the source PDF field for the current action.<br><br>
+
+<strong>Exit</strong> - ‘Exit’ (Alt-X) deletes any PDFTK Builder temporary files and quits the program.<br><br>
+
+<strong>Reset</strong> - ‘Reset’ clears the input file(s) and resets related checkboxes.  The Document Protection panel is not affected.<br><br>
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>DOCUMENT PROTECTION</strong></h3><br>
+
+The Document Protection panel is used to change the permissions and owner and user passwords to be applied to output PDF documents.  It can be toggled open or closed by clicking on the arrow button or a blank portion of the panel or by typing Alt-P or Ctrl-P.  Setting passwords results in encryption of parts of the file.  The 'owner' password restricts who can change passwords and permissions (e.g., printing, copying, etc.) but does not stop users from reading the document.  Specifying a 'user' ('open') password will stop anyone without either 'user' or 'owner' passwords from opening and reading the document.  The default settings (no passwords set and all permissions enabled) provide full access to the output PDF file.<br><br>
+
+Note: PDFTK Builder and the underlying PDFtk tool generally expect source PDF files to be unencrypted.  Therefore any files generated with passwords will need to be decrypted before being processed with PDFTK Builder.<br><br> 
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>GETTING STARTED</strong></h3><br>
+
+PDFTK Builder is a portable app.  It is distributed in the form of a .zip file that also includes a copy of the latest PDFtk executable (pdftk.exe, v2.02).  A PDF viewer (e.g., Adobe Reader) and text editor (e.g., Notepad) need to be available on the system to open PDF documents and text reports from within the program.  By default, the program uses the applications associated with .pdf and .txt file types in Windows for viewing files.<br><br>
+
+To get started, simply extract the .zip archive to a folder of your choice and click on the included PDFTK Builder executable (PdftkBuilder.exe) or a shortcut thereto. A few settings (e.g., page size used for Number Pages) may eventually need be to changed in the configuration (.ini) file, but not immediately.<br><br>
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br> 
+
+<h3><strong>CONFIGURATION FILE</strong></h3><br>
+
+Settings in the PdftkBuilder.ini file allow for configuration of: <strong>(1)</strong> page number layout dimensions (Mark Pages), <strong>(2)</strong> non-default executables for viewing .pdf and .txt files, <strong>(3)</strong> names and executables for  up to five external PDF apps that may be launched from the program (Tool Sets-Launch), <strong>(4)</strong> version number of PDFtk executable (pdftk.exe) if less than 2.00, and <strong>(5)</strong> folder location of the PDFtk executable if not in the PDFTK Builder folder.   See file instructions.txt, Appendix C of the Users Guide, and examples in PdftkBuilder.ini for further information on configuring the program.<br><br>
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>DOCUMENTATION</strong></h3><br>
+
+The PDFTK Builder User Guide provides a more detailed description of the user interface and PDF operations supported, instructions on configuring the program and integrating external PDF apps, and other explanatory information.  The User Guide, this help file, a PDFtk Server Reference Manual, and the program's configuration (.ini) file are all accessible from the 'Help' menu of the program.<br><br> 
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>  
+
+<h3><strong>DOWNLOADS</strong></h3><br>
+
+Executables and User Documentation (includes PDFtk Server v2.02)<br>  
+<a href="https://sourceforge.net/projects/pdftk-builder-enhanced/files/PdftkBuilder-4.1.6-portable.zip" download>PdftkBuilder-4.1.6-portable.zip</a> (6.4 MB)<br><br>  
+  
+Source code (Delphi 10.2)<br>  
+<a href="https://sourceforge.net/projects/pdftk-builder-enhanced/files/PdftkBuilder-4.1.6-source.zip" download>PdftkBuilder-4.1.6-source.zip</a> (69 KB)<br><br>   
+
+----------------------------------------------------------------------------------------------------------------------------------<br><br>
+
+<h3><strong>PDFTK Builder History</strong></h3><br>
+<table cellspacing="2" cellpadding="2" border="0">
+<tr>
+	<td width="90px"><strong>Version</strong></td>
+	<td width="100px"><strong>Date</strong></td>
+	<td><strong>Changes</strong></td>
+</tr>
+
+
+<tr>
+	<td valign="top">4.1.6</td>
+	<td valign="top">28 May 21</td>
+	<td>
+Added: After a password has been set and the panel is closed, the caption on the Document Protection panel button will now be displayed in red to indicate that encryption of output PDFs is in effect.<br><br></td>
+</tr>
+
+<tr>
+	<td valign="top">4.1.5</td>
+	<td valign="top">13 Oct 19</td>
+	<td>
+Added: Fixed user interface issue where those tools on the ‘Tool Sets’ tab that do not output PDF files (e.g., ‘Dump Data’) were erroneously enabling or affecting the ‘View’, ‘Locate’ and ‘Pipe’ output buttons.<br><br></td>
+</tr>
+
+
+<tr>
+	<td valign="top">4.1.4</td>
+	<td valign="top">18 Sep 19</td>
+	<td>
+Added: 'Split File' tab now supports producing output PDF files in chunks of N pages. Default output is individual page files (N=1).<br><br></td>
+</tr>
+<tr>
+	<td valign="top">4.1.3</td>
+	<td valign="top">13 Sep 19</td>
+	<td>
+Added: 'Rotate Pages' tab now supports entry of a list of page ranges for rotate, extract and delete options when PdftkVersion >= 2.00 (default). For PdftkVersion < 2.00, pages entry remains a single page range with separate edit boxes for the start and end pages.<br><br></td>
+</tr>
+<tr>
+<tr>
+	<td valign="top">4.1.2</td>
+	<td valign="top">28 Jul 19</td>
+	<td>Initial public release of PDFTK Builder Enhanced.<br><br>  
+Added: <strong>(1)</strong> Options on 'Rotate Pages' tab to delete and extract pages; <strong>(2)</strong> PDFtk Server manual to Help menu.<br><br>
+Update: <strong>(1)</strong> 'Shuffle' mode relabeled 'Interleave' on 'Join Files' tab; <strong>(2)</strong> 'Del' key added as hotkey to 'Remove' file in 'Join Files' list (when focus not on 'Pages' edit box); <strong>(3)</strong> .html and .pdf files relocated to 'docs' subfolder; <strong>(4)</strong> Ctrl-J, -S, -M, -R, -T, -P hotkeys for switching tabs, etc. restored without restoring 'View' menu' deleted in v4.0.0.<br><br></td>
+</tr>
+<tr>
+	<td valign="top">4.1.1</td>
+	<td valign="top">26 Oct 18</td>
+	<td>Added:  Page rotations can now be made compatible with PDFtk versions < 2.00 by setting PDFtk version in the .ini file.<br><br></td>
+</tr>
+
+<tr>
+	<td valign="top">4.1.0</td>
+	<td valign="top">17 Jul 18</td>
+	<td>Added: <strong>(1)</strong> Drag and drop support for source and secondary input files on other 4 tab sheets; <strong>(2)</strong> context menu (right-click) with items to extract pages from selected file, open file location, display file properties; <strong>(3)</strong> double click to view the selected source PDF file in the 'Join Files' list; <strong>(4)</strong> additional page numbering options, including left and center positions, page range, starting number, and prefix/suffix text with text placeholders; <strong>(5)</strong> 'Uncompress' and 'Compress' operations to 'Tool Sets'; <strong>(6)</strong> dual input PDF file capability to 'Launch' action; <strong>(7)</strong> 'Compare' action to use external PDF text compare tool, such as WinMerge; <strong>(8)</strong> 'Odd/Even' option to 'Split File'; <strong>(9)</strong> Help menu items to view/edit .ini file and view User Guide (.pdf).<br><br>
+
+Update: Incorporated following cosmetic changes from v3.9.6:  <strong>(1)</strong> save and restore last closed position of main form, <strong>(2)</strong> preserve top position of main form when opening/closing document protection panel, <strong>(3)</strong> add arrow button for opening/closing document protection panel.<br><br>
+
+Bugfix: Retrofitted applicable bugfixes from v3.9.6 through v3.10.0.<br><br>
+</td>
+</tr>
+
+<tr>
+	<td valign="top">4.0.0</td>
+	<td valign="top">28 Nov 17</td>
+	<td>Initial enhanced version of PDFTK Builder (based on v3.9.4).<br><br>
+
+Added:  <strong>(1)</strong> 'Shuffle' option to 'Join Files'; <strong>(2)</strong> file name only display mode, second column for P (pages) and T (truncated file name) indicators, and increased size of grid to display more rows and longer file names in 'Join Files' list; <strong>(3)</strong> capability to use 'Join File' list as sequential source for other tab sheets; <strong>(4)</strong> Alt-Shift-S, -M, -R, -T keys to 'Join Files' tab sheet to forward selected source document to another tab sheet; <strong>(5)</strong> capability to manually copy and paste input file names through the clipboard;  <strong>(6)</strong> labels to display input file names and page counts on Split, Mark Pages, Rotate Pages and Tools tabs; <strong>(7)</strong> edit boxes to specify page range and button to change output folder to 'Split File' tab sheet;  <strong>(8)</strong> 'multibackground' / 'multistamp' capability (automatically used for background/stamp files with multiple pages); <strong>(9)</strong> options for position, mirroring, and page orientation for page numbers;  <strong>(10)</strong> 'Misc Tools' tab sheet with 12 new functions; <strong>(11)</strong> 'View', 'Locate' and 'Pipe' buttons to output panel; <strong>(12)</strong> page count and file size to status bar message and copy of file path to clipboard when output file saved.<br><br>
+
+Update:  <strong>(1)</strong> Replaced PDFtk v1.41 (Nov 2006) with PDFtk Server v2.02 (Jul 2013); <strong>(2)</strong> incorporated revised rotation syntax from PDFtk v1.45; <strong>(3)</strong> dropped 'View' menu and use of Ctrl key for switching tab sheets; <strong>(4)</strong> replaced use of ctrl-A for selecting all items in Join Files list with 'Reset' button; <strong>(5)</strong> changed opening position of window from desktop center to screen center to fix main form from spanning dual monitors.<br><br>
+
+Bugfix (to v3.9.4): Removed extraneous auto re-sorting of source PDF list after file added via drag and drop.<br><br></td>
+</tr>
+
+
+<tr>
+	<td valign="top">-------</td>
+	<td valign="top">-----------</td>
+	<td>-----------------------------------<br><br></td>
+</tr>
+<tr>
+	<td valign="top"></td>
+	<td valign="top"></td>
+	<td><i>The following entries are for releases of <a href="http://www.angusj.com/pdftkb/">PDFTK Builder by Angus Johnson</a></i>.<br><br></td>
+</tr>
+<tr>
+	<td valign="top">3.10.0</td>
+	<td valign="top">13 Jul 18</td>
+	<td>Bugfix: Minor bugfix to formatting of join files page ranges.</td>
+</tr>
+<tr>
+	<td valign="top">3.9.6</td>
+	<td valign="top">24 Mar 18</td>
+	<td>Bugfix: Minor bugfixes and cosmetic changes.</td>
+</tr>
+<tr>
+	<td valign="top">3.9.4</td>
+	<td valign="top">26 Apr 15</td>
+	<td>Added: Support for Unicode filenames.<br>Update: Further cosmetic improvements, including button for doc protection panel.  Help file format changed from .hlp to .html to allow display in Windows 10.</td>
+</tr>
+<tr>
+	<td valign="top">3.8</td>
+	<td valign="top">21 Apr 15</td>
+	<td>Update: Added page numbering option.<br>Cosmetic improvements to accommodate large fonts etc.</td>
+</tr>
+<tr>
+	<td valign="top">3.6</td>
+	<td valign="top">09 Jul 09</td>
+	<td>Update: PDF page count algorithm updated to read later versions of the PDF file format.</td>
+</tr>
+<tr>
+	<td valign="top">3.5</td>
+	<td valign="top">03 May 08</td>
+	<td>Added ability to drag and drop PDF files into the collate list.</td>
+</tr>
+<tr>
+	<td valign="top">3.0</td>
+	<td valign="top">14 Apr 07</td>
+	<td>Collate no longer limited to 26 files.<br>Added 'Rotate' option.<br>Added 'Stamp' option.<br>Added an option to 'Background' or 'Stamp' just first page of a document.
+</td>
+</tr>
+<tr>
+	<td>2.3.4</td>
+	<td>20 Mar 06</td>
+	<td>Added 'Split' option and minor bug fixes.</td>
+</tr>
+<tr>
+	<td>2.3.1</td>
+	<td>02 Jan 05</td>
+	<td>Initial release</td>
+</tr>
+</table>
+<br><br>
+Last Updated: 28 May 2021 (DK)
+<br><br><br>
+<!-- end black border table-->	  
+</TD></TR></TABLE>
+</TD></TR></TABLE>
+<!-- end main table -->  
+</DIV>
+</BODY>
+</HTML>

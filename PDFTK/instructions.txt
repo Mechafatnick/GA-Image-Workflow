@@ -1,0 +1,76 @@
+
+Instructions for PDFTK Builder Enhanced Version 4.1.6 Portable Distribution
+
+1. Download the PdftkBuilder-4.1.6-portable.zip file and extract its contents to the default folder 
+or to a folder of your choice.
+
+NOTE: If you have an existing installation of PDFTK Builder and have customized the .ini file, 
+(a) extract the .zip file to a different folder or (b) rename, copy, or move your existing 
+PdftkBuilder.ini file so it won't be overwritten by the default .ini file and then restore it.
+
+This folder will serve as the PDFTK Builder program folder and should contain the following files:  
+
+	pdftk.exe			(PDFtk Server version 2.0.2 Windows executable, 32-bit)
+	libiconv2.dll			(GNU Win32 package to convert between character encodings)	
+
+	PdftkBuilder.exe		(PDFTK Builder Windows executable, 32-bit)		 
+	PdftkBuilder.ini		(PDFTK Builder configuration file)
+
+	instructions.txt
+	license.txt
+
+	\docs 				(Documents subfolder containing following 9 files)
+	  PdftkServer.pdf		(PDFTK Server Reference Manual)
+	  PdftkBuilder.pdf		(PDFTK Builder User Guide)
+	  PdftkBuilder.html		(PDFTK Builder Help File)
+	  pdftkb.png
+	  pdftkb_context_menu.png
+	  pdftkb_split.png
+	  pdftkb_number.png
+	  pdftkb_rotate.png
+	  pdftkb_compare.png
+
+Click on file PdftkBuilder.exe to launch program.  Note that this file is not code signed and thus
+Windows will flag it as risky the first time the program is launched.  As long as the application 
+was downloaded directly from its project site on SourceForge, the message can be safely ignored by 
+clicking on the ‘More info’ link on the upper left of the first screen and then the ‘Run anyway' 
+button at the bottom of the second screen.
+
+---------------------------------------------------------------------------------------------------
+STEPS 2 & 3 ONLY APPLY IF YOUR DISTRIBUTION CAME WITHOUT A COPY OF .EXE FILE FOR PDFTK SERVER v2.02.  
+IF NO .EXE FILE WAS PROVIDED BUT v2.02 IS ALREADY INSTALLED ON YOUR MACHINE, YOU MAY SKIP STEP 2.
+---------------------------------------------------------------------------------------------------
+
+2. Download the PDFtk Server installer for Windows from: 
+
+	https://www.pdflabs.com/tools/pdftk-server/    (see the Windows Download section)
+
+and run it.  The PDFtk executable (pdftk.exe) will be installed in the following folder on a
+64-bit Windows machine:
+
+	C:\Program Files (x86)\PDFtk Server\bin\.
+
+3. Copy the file from pdftk.exe the PDFtk Server\bin subfolder:
+
+	C:\Program Files (x86)\PDFtk Server\bin\pdftk.exe
+	
+to the PDFTK Builder folder (created in step 1).
+
+4. (Optional) Settings (.ini):  Edit the following sections of PdftkBuilder.ini if applicable.
+Changing the default settings can be delayed until actually needed as the program will run as-is.
+
+[Numbering]:  For consistency with PDFTK Builder v3, the initial setting of page size is A4 (ISO).
+If you use letter (8-1/2x11 in.) pages instead of A4 pages and plan to use the 'Number Pages' option 
+on the 'Mark Pages' tab, comment out the PageWidth and PageHeight lines for A4 pages (595x842) and 
+un-comment the corresponding lines for letter pages (612x792).
+
+[Applications] If you want to (a) use an app to view (open) .pdf or .txt files other than the one
+set by the file association or (b) specify external apps for use with the 'Compare' or 'Launch' 
+functions of Tool Set 4, the apps must be installed and then configured in the .ini file.
+
+For further instructions, see file PdftkBuilder.ini and Appendix C of the PDFTK Builder User Guide, 
+both of which are accessible from the Help menu of the program.
+
+
+Last Updated: 28 May 2021 (DK)
+
