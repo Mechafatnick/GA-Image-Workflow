@@ -1145,8 +1145,8 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     savetiff(doc,outfile)
     
     //OCR TIff
-    if(nosattfile == 0){ocrOutput(outFolderWin,outFolder + "/" + basename, ".tif", basename)}
-    if(nosattfile == 1){ocrOutput(outFolderWin,outFolder + "/" + basename, ".tif", basename+"_nosattva.tif");nosattfile=0;}
+    if(nosattfile == 0){ocrOutput(outFolderWin, basename, ".tif")}
+    if(nosattfile == 1){theNoSattva =  basename + "_nosattva"; ocrOutput(outFolderWin, theNoSattva, ".tif");nosattfile=0;}
 
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
@@ -1157,14 +1157,14 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     if(!alternateFolder.exists) alternateFolder.create();
     try{
     var no130 = 0;
-        multipleDescreenbw(doc, basename + "_133", 133, outFolder);ocrOutput(outFolderWin, outFolder + "/" + basename + "_133",".tif", basename + "_133");
+        multipleDescreenbw(doc, basename + "_133", 133, outFolder);ocrOutput(outFolderWin, basename + "_133",".tif");
     }
     catch(err){onethirtyArr.push(basename);no130=1;}
     
     try{if (no130==0){multipleDescreenbw(doc, basename + "_150", 150, alternateFolder)}
         else{multipleDescreenbw(doc, basename + "_150", 150, outFolder);}}
-    catch(err){oneFiftyArr.push(basename);if (no130==1){var outfile = new File(outFolder + "/" + basename + "_nosattva.tif");savetiff(doc,outfile);
-    ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename + "_nosattva");}}
+    catch(err){oneFiftyArr.push(basename);if (no130==1){var outfile = new File(outFolder + "/" + basename + "_nosattva.tif");savetiff(doc,outfile);theNoSattva = basename + "_nosattva";
+    ocrOutput(outFolderWin, theNoSattva, ".tif");}}
     
     try{multipleDescreenbw(doc, basename + "_170", 170, alternateFolder)}
     catch(err){oneSeventyArr.push(basename)}
@@ -1190,7 +1190,7 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
         outfile = new File(outFolder + "/" + basename + "_custom.tif")
         savetiff(doc,outfile)
         //OCR TIff
-        ocrOutput(outFolderWin, outFolder + "/" + basename + "_custom", ".tif", basename + "_custom.tif")
+        ocrOutput(outFolderWin, basename + "_custom", ".tif")
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
     catch(err){alert(err);custombw=false; processbw(doc, basename, workFolder, outFolder,alternateFolder,customBWsize,customBWsharp)}
@@ -1244,7 +1244,7 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     outfile = new File(outFolder + "/" + basename + "_custom.tif")
     savetiff(doc,outfile)
     //OCR TIff
-    ocrOutput(outFolderWin, outFolder + "/" + basename + "_custom", ".tif", basename + "_custom")
+    ocrOutput(outFolderWin, basename + "_custom", ".tif")
     doc.close(SaveOptions.DONOTSAVECHANGES);
     }    
     catch(err){ customCol=false; processCol(doc, basename, workFolder, outFolder, alternateFolder, customSize, customSharp, customMoir, customAngle, customSensitivity)}
@@ -1258,11 +1258,11 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     SmartSharp(ssPercent, ssPixel,ssNoiseReduction,ssBlur,sShdAmnt, sShdWdth, shghAmnt, sghwdth)
     doc.bitsPerChannel = BitsPerChannelType.EIGHT;
     nosattfile = 0
-    if(DescreenOn == false){outfile = new File(outFolder + "/" + basename + "_noSattva.tif"); nosattfile = 1;}
+    if(DescreenOn == false){outfile = new File(outFolder + "/" + basename + "_nosattva.tif"); nosattfile = 1;}
     else{outfile = new File(outFolder + "/" + basename + ".tif")}
     savetiff(doc,outfile)
-    if(nosattfile ==0){ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename)}
-    if(nosattfile ==1){ocrOutput(outFolderWin, outFolder + "/" + basename, ".tif", basename + "_noSattva");nosattfile=0}
+    if(nosattfile ==0){ocrOutput(outFolderWin, basename, ".tif")}
+    if(nosattfile ==1){ theNoSattva = basename + "_nosattva"; ocrOutput(outFolderWin, theNoSattva, ".tif");nosattfile=0}
   
     var workingfile = new File(workFolder + "/" + basename + ".psd");
     if (saveWorkingCheck.value == true){SavePSD(workingfile)}
@@ -1279,13 +1279,13 @@ function processbw(doc, basename, workFolder, outFolder, alternateFolder, custom
     
     try{
         multipleDescreenCol(doc,basename+"_150",150, 1, true, 0, 0, outFolder);
-    ocrOutput(outFolderWin, outFolder + "/" + basename + "_150", ".tif", basename + "_150");}
+    ocrOutput(outFolderWin, basename + "_150", ".tif");}
     catch(err){oneFiftyArr.push(basename);no150=1}
     
     
     try{if (no150==0){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, alternateFolder)}
-    if (no150==1){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, outFolder);ocrOutput(outFolderWin,outFolder + "/" + basename + "_170", ".tif", basename + "_170");}}
-    catch(err){oneSeventyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_noSattva.tif");ocrOutput(outFolderWin,outFolder + "/" + basename + "_noSattva", ".tif", basename + "_noSattva");}
+    if (no150==1){multipleDescreenCol(doc,basename+"_170",170, 1, true, 0, 0, outFolder);ocrOutput(outFolderWin, basename + "_170", ".tif");}}
+    catch(err){oneSeventyArr.push(basename);var outfile = new File(outFolder + "/" + basename + "_nosattva.tif");savetiff(doc,outfile);theNoSattva = basename + "_nosattva"; ocrOutput(outFolderWin,theNoSattva, ".tif",);}
     
     try{multipleDescreenCol(doc,basename + "_200",200, 1, true, 0, 0, alternateFolder)}
     catch(err){twoHundreArr.push(basename)}
@@ -2470,26 +2470,26 @@ return WinPath
 }
 
 //OCR Image and save as pdf
-function ocrOutput(outFolderWin, path, ext, filename){
+function ocrOutput(outFolderWin, filename, ext){
 
-thepath = convertPath(path)
 
-thefile = new File(thepath + ext)
 if(ocrpdf == 1){
 
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
 batFile.encoding = "UTF8";
-batFile.open("e", "TEXT", "????");
-//finalFile = thepath + ".pdf"
-batFile.writeln("rename " + '"' + thepath + ext + '"' + " " + "tempfile.tif")
+batFile.open("w", "TEXT", "????");
+
+batFile.writeln("rename " + '"' + outFolderWin + "\\" + filename + ext + '"' + " " + "tempfile.tif")
 if(preserveInterword ==1){batFile.writeln('"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " -c preserve_interword_spaces=1 pdf");}
 if(preserveInterword ==0){'"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile.pdf" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " pdf"}
 batFile.writeln("del " + '"' + outFolderWin + "\\tempfile.tif" + '"')
 batFile.writeln("rename " + '"' + outFolderWin + "\\tempfile.pdf" + '"' +  " " + '"' + filename + ".pdf" + '"')
+batFile.writeln("echo rename complete")
 
 batFile.close()                        
 batFile.execute()
-outputFile = new File(thepath + ".pdf")
+//alert("stop")
+outputFile = new File(outFolderWin + "\\" + filename + ".pdf")
 ourLength = outputFile.length;
 //$.sleep(timeoutLength)
 
@@ -2501,11 +2501,11 @@ ourLength = outputFile.length;
             break
         }
     }
+$.sleep(200)
 
-batFile.remove()
 outputFile = convertPath(outputFile)
 processedFiles.push(('"' + outputFile + '"'));
-thefile.remove();}
+batFile.remove()}
 }
 
 
