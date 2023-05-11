@@ -1023,10 +1023,16 @@ var batFile = new File(scriptPathWin + "/Hackybat.bat");
 
 batFile.encoding = "UTF8";
 batFile.open("e", "TEXT", "????");
+removeold = new File(outFolderWin + "//" + "0-cover." + cvrext)
+removeold.remove();
 //Front cover
-if(frontCvrPos ==1){batFile.writeln("rename " + processedFiles[processedFiles.length-pageNum] + " " + "0-Cover." + cvrext);
+if(frontCvrPos ==1){
+
+batFile.writeln("rename " + processedFiles[processedFiles.length-pageNum] + " " + "0-Cover." + cvrext);
 newArray.push('"' + outFolderWin + "/" + "0-Cover." + cvrext)}
-if(frontCvrPos ==0){batFile.writeln("rename " + processedFiles[(pageNum-1)] + " " + "0-Cover." + cvrext);
+if(frontCvrPos ==0){
+
+batFile.writeln("rename " + processedFiles[(pageNum-1)] + " " + "0-Cover." + cvrext);
 newArray.push('"' + outFolderWin + "/" + "0-Cover." + cvrext)}
 
 //rest of the pages
@@ -1064,6 +1070,9 @@ processedFiles = newArray;
 processedFiles = processedFiles.join(' ');
 
 if(bindpdf ==1){
+scanFolderpath = convertPath(scanFolder)
+removeOld = new File(scanFolderpath + "\\" + scanFolderString + ".pdf")
+removeOld.remove();
 
 scanFolderpath = convertPath(scanFolder)
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
@@ -2474,6 +2483,15 @@ function ocrOutput(outFolderWin, filename, ext){
 
 
 if(ocrpdf == 1){
+
+//check for oldies
+ removetemp = new File(outFolderWin + "\\tempfile.tif")
+ removetemp.remove();
+ removeOut = new File(outFolderWin + "\\tempfile.pdf")
+ removeOut.remove();
+ removefinal = new File(outFolderWin + "\\" + filename + ".pdf")
+ removefinal.remove();
+
 
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
 batFile.encoding = "UTF8";
