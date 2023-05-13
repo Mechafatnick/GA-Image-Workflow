@@ -732,7 +732,7 @@ if(preprocess==1){filesTest = scanFolder.getFiles();if(filesTest.length > 1){pre
 /////////////////////
 
 function preprocessFolder(scanFolder, left){
-    
+
 pageCounter = 001;
 //get Windows path to Scann folder
 scanFolderWin = convertPath(scanFolder)
@@ -754,13 +754,25 @@ newBW =[]
 processedFolder = Folder(scanFolder + "/Processed")
 processedWin = convertPath(scanFolder + "/Processed")
 if(!processedFolder.exists) processedFolder.create();
+originalFolder = Folder(scanFolder + "/Processed/Originals/")
+if(!originalFolder.exists){originalFolder.create()}
+
+
 for (var i=0;i < currentFiles.length; i++){
 thename = currentFiles[i].name;
 thenamenoext = currentFiles[i].name.substring(0, currentFiles[i].name.lastIndexOf('.'));
 fileName = currentFiles[i].fsName.substring(0, currentFiles[i].fsName.lastIndexOf('.'))
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
+var trigger = new File(scriptPathWin + "/trigger.bat");
+trigger.encoding = "UTF8";
+trigger.open("w", "TEXT", "????");
+trigger.writeln("start /min " + scriptPathWin + "/Hackybat.bat")
+trigger.close();
+
+
 batFile.encoding = "UTF8";
 batFile.open("e", "TEXT", "????");
+batFile.writeln("copy " + '"' + currentFiles[i].fsName + '"' + " " + '"' + scanFolderWin + "\\" + "Processed" + "\\" + "Originals");
 batFile.writeln("move " + '"' + currentFiles[i].fsName + '"' + " " + '"' + processedWin + "\\" + thename + '"');
 batFile.writeln('"' + imgMgkWin + '"' + " mogrify -bordercolor \"#f3f4f3\" -border 1x1 -fuzz 7%% -trim -shave 1.0x0.20%% +repage -gravity South -chop 0x40 " + '"' + processedWin + "\\" + thename + '"');
 if(isOdd(i) == false){
@@ -825,14 +837,14 @@ if(left == 1){
     pageCounter++;
     pageNumber=getPageNumber(pageCounter)  
 }
-
+batFile.writeln("exit")
 
 
 
 outputFile = new File(ourFile)
 
 batFile.close();
-batFile.execute();
+trigger.execute();
 //batFile.remove();
 
 
@@ -850,10 +862,14 @@ batFile.remove();
 
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
 batFile.encoding = "UTF8";
-batFile.open("e", "TEXT", "????");
+batFile.open("w", "TEXT", "????");
+batFile.writeln("mkdir " + '"' + scanFolderWin + "\\" + "Originals" + '"')
+batFile.writeln("move " + '"' + processedWin + "\\" + "Originals"  + "\\" + "*" + '"' + " " + '"'  + scanFolderWin + "\\" + "Originals" +  '"');
+batFile.writeln("rmdir " + '"' + processedWin + "\\" + "Originals" + '"');
 batFile.writeln("move " + '"' + processedWin + "\\" + "*" + '"' + " " + '"'  + scanFolderWin + '"');
 batFile.writeln("rmdir " + '"' + processedWin + '"');
 batFile.close();
+//alert("stop")
 batFile.execute();
 $.sleep(1000)
 
@@ -2494,18 +2510,24 @@ if(ocrpdf == 1){
 
 
 var batFile = new File(scriptPathWin + "/Hackybat.bat");
+var trigger = new File(scriptPathWin + "/trigger.bat")
 batFile.encoding = "UTF8";
 batFile.open("w", "TEXT", "????");
-
+trigger.encoding = "UTF8";
+trigger.open("w", "TEXT", "????");
+trigger.writeln("start /min " + scriptPathWin + "/Hackybat.bat")
+trigger.close();
+//batFile.writeln("if  \"%1\" == \"\" start \"\" /min \"" + scriptPathWin + "/Hackybat.bat\" MY_FLAG && exit" )
 batFile.writeln("rename " + '"' + outFolderWin + "\\" + filename + ext + '"' + " " + "tempfile.tif")
 if(preserveInterword ==1){batFile.writeln('"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " -c preserve_interword_spaces=1 pdf");}
 if(preserveInterword ==0){'"' + TessExe + '"' + " " + '"' + outFolderWin + "\\tempfile.tif" + '" ' + '"' + outFolderWin + "\\tempfile.pdf" + '"' + " --oem 3" +  " -l " + language + "+" + seclang + " pdf"}
 batFile.writeln("del " + '"' + outFolderWin + "\\tempfile.tif" + '"')
 batFile.writeln("rename " + '"' + outFolderWin + "\\tempfile.pdf" + '"' +  " " + '"' + filename + ".pdf" + '"')
 batFile.writeln("echo rename complete")
-
+batFile.writeln("exit" )
 batFile.close()                        
-batFile.execute()
+//batFile.execute()
+trigger.execute()
 //alert("stop")
 outputFile = new File(outFolderWin + "\\" + filename + ".pdf")
 ourLength = outputFile.length;
@@ -2523,7 +2545,9 @@ $.sleep(200)
 
 outputFile = convertPath(outputFile)
 processedFiles.push(('"' + outputFile + '"'));
-batFile.remove()}
+batFile.remove()
+trigger.remove()
+}
 }
 
 
